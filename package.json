@@ -1,0 +1,19 @@
+{
+  "name": "interviewdream-backend",
+  "version": "1.0.0",
+  "description": "Graphql apis for interviewDream project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nav2510/interviewDream-backend.git"
+  },
+  "author": "Navdeep Singh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nav2510/interviewDream-backend/issues"
+  },
+  "homepage": "https://github.com/Nav2510/interviewDream-backend#readme"
+}
