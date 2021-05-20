@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Graphql apis for interviewDream project",
   "main": "app.js",
+  "engines": {
+    "node": "14.17.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js"
