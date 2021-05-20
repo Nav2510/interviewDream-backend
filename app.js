@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { graphqlHTTP } = require('express-graphql');
+const helmet = require('helmet');
+const compression = require('compression');
 
 const graphqlSchemas = require('./graphql/schemas');
 const graphqlResolvers = require('./graphql/resolvers');
@@ -8,6 +10,12 @@ const graphqlResolvers = require('./graphql/resolvers');
 const port = process.env.PORT || 3001;
 
 const app = express();
+
+// Securing app using helmet
+app.use(helmet());
+
+// Optimizing using compression
+app.use(compression());
 
 // TODO: Move is to middleware folder
 // Allowing various CORS headers, methods
