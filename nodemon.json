@@ -1,0 +1,6 @@
+{
+  "env": {
+    "PORT": 8080,
+    "MONGO_ATLAS_URI": "mongodb+srv://interviewDream:cGgkPge4T8pqZrY1@cluster0.pzsnr.mongodb.net/interviewDream?retryWrites=true&w=majority"
+  }
+}
