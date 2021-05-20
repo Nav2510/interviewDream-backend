@@ -8,6 +8,8 @@ const questionSchema = new Schema({
   marks: Number,
   explanation: String,
   hasExplanation: Boolean,
+  difficulty: Number,
+  categories: [String],
   type: { type: String, required: true },
   options: [
     {
@@ -25,8 +27,6 @@ const questionSchema = new Schema({
       },
     },
   ],
-  difficulty: Number,
-  categories: [String],
 });
 
 module.exports = mongoose.model('Question', questionSchema);
