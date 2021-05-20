@@ -3,8 +3,13 @@
   "version": "1.0.0",
   "description": "Graphql apis for interviewDream project",
   "main": "app.js",
+  "engines": {
+    "node": "14.17.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "start:dev": "nodemon app.js  "
   },
   "repository": {
     "type": "git",
@@ -15,5 +20,13 @@
   "bugs": {
     "url": "https://github.com/Nav2510/interviewDream-backend/issues"
   },
-  "homepage": "https://github.com/Nav2510/interviewDream-backend#readme"
+  "homepage": "https://github.com/Nav2510/interviewDream-backend#readme",
+  "dependencies": {
+    "compression": "^1.7.4",
+    "express": "^4.17.1",
+    "express-graphql": "^0.12.0",
+    "graphql": "^15.5.0",
+    "helmet": "^4.6.0",
+    "mongoose": "^5.12.10"
+  }
 }
