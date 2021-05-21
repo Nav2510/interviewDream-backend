@@ -10,7 +10,13 @@ const port = process.env.PORT || 3001;
 
 const app = express();
 
-const server = new ApolloServer({ typeDefs, resolvers });
+// TODO: Remove playground and introspection once complete integration with Client is done
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  introspection: true,
+  playground: true,
+});
 
 // Optimizing using compression
 app.use(compression());
