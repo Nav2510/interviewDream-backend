@@ -16,6 +16,21 @@ const server = new ApolloServer({
   resolvers,
   introspection: true,
   playground: true,
+  formatError: (error) => {
+    if (!error.originalError) {
+      return error;
+    }
+    const data = error.originalError.data;
+    const message = error.message;
+    const code = error.originalError.code;
+    const msgCode = error.originalError.msgCode;
+    return {
+      message,
+      status: code,
+      msgCode,
+      data,
+    };
+  },
 });
 
 // Optimizing using compression

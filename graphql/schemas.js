@@ -3,16 +3,29 @@ const { gql } = require('apollo-server-express');
 
 // Construct a schema, using GraphQL schema language
 module.exports = gql`
-  # ======================Enums=====================
+  # =======================Enums====================
   enum QuestionPaperTypeEnum {
     MULTIPLE_CORRECT
     SINGLE_CORRECT
+  }
+
+  # =======================Input====================
+  input RegisterInputData {
+    username: String!
+    password: String!
+    email: String!
   }
 
   # =======================Interface================
 
   # =======================Types====================
   # TODO: Verify type with mongoose schema for all types
+
+  type AuthenticationData {
+    userId: String!
+    accessToken: String!
+    expiresIn: Int!
+  }
 
   type BasicInfo {
     email: String!
@@ -122,7 +135,6 @@ module.exports = gql`
     username: String!
   }
 
-  # ====================Root Mutation==========
   # ====================Root Query=============
   type Query {
     course: Course!
@@ -132,5 +144,11 @@ module.exports = gql`
     paper: Paper!
     papers: PaperData!
     test: Test!
+  }
+
+  # ====================Root Mutation==========
+  type Mutation {
+    login: AuthenticationData!
+    register(registerInput: RegisterInputData!): AuthenticationData!
   }
 `;

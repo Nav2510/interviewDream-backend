@@ -60,10 +60,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  publicProfileUrl: {
-    type: String,
-    required: true,
-  },
+  publicProfileUrl: String,
   bgImage: {
     type: String,
     required: true,
