@@ -4,12 +4,15 @@ const { getCurrentUser } = require('./resolvers/user-resolver');
 const { getTest } = require('./resolvers/test-resolver');
 const { getCourse } = require('./resolvers/course-resolver');
 
+// Provide resolver functions for your schema fields
 module.exports = {
-  course: getCourse,
-  me: getCurrentUser,
-  question: getQuestion,
-  questions: getQuestions,
-  paper: getPaper,
-  papers: getPapers,
-  test: getTest,
+  Query: {
+    course: getCourse,
+    me: getCurrentUser,
+    question: getQuestion,
+    questions: getQuestions,
+    paper: getPaper,
+    papers: getPapers,
+    test: getTest,
+  },
 };

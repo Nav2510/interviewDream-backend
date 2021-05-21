@@ -1,6 +1,8 @@
-const { buildSchema } = require('graphql');
+// const { buildSchema } = require('graphql');
+const { gql } = require('apollo-server-express');
 
-module.exports = buildSchema(`
+// Construct a schema, using GraphQL schema language
+module.exports = gql`
   # ======================Enums=====================
   enum QuestionPaperTypeEnum {
     MULTIPLE_CORRECT
@@ -44,7 +46,6 @@ module.exports = buildSchema(`
     school: String
     workplace: String
   }
-
 
   type Option {
     isAnswer: Boolean!
@@ -123,7 +124,7 @@ module.exports = buildSchema(`
 
   # ====================Root Mutation==========
   # ====================Root Query=============
-  type RootQuery {
+  type Query {
     course: Course!
     me: User!
     question: Question!
@@ -132,9 +133,4 @@ module.exports = buildSchema(`
     papers: PaperData!
     test: Test!
   }
-
-  # ======================Schema=================
-  schema {
-    query: RootQuery
-  }
-`);
+`;
