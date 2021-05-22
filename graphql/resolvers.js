@@ -7,11 +7,13 @@ const {
   getPaper,
   getPapers,
   createPaper,
+  selectQuestionsForPaper,
 } = require('./resolvers/paper-resolver');
 const {
   getCurrentUser,
   login,
   register,
+  updateUserProfile,
 } = require('./resolvers/user-resolver');
 const { getTest, createTest } = require('./resolvers/test-resolver');
 const { getCourse, createCourse } = require('./resolvers/course-resolver');
@@ -28,11 +30,13 @@ module.exports = {
     test: getTest,
   },
   Mutation: {
+    selectQuestionsForPaper: selectQuestionsForPaper,
     createCourse: createCourse,
     createPaper: createPaper,
     createQuestion: createQuestion,
     createTest: createTest,
     login: login,
     register: register,
+    updateUserProfile: updateUserProfile,
   },
 };

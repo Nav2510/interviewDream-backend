@@ -5,6 +5,8 @@ const errorCode = {
   qstnExist: 'QSTN_EXIST',
   testExist: 'TEST_EXIST',
   pprExist: 'PPR_EXIST',
+  pprNotExist: 'PPR_NOT_EXIST',
+  qstnNotExist: 'QSTN_NOT_EXIST',
 };
 
 module.exports = errorCode;

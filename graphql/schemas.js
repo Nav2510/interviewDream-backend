@@ -10,6 +10,18 @@ module.exports = gql`
   }
 
   # =======================Input====================
+  input BasicInfoInputData {
+    fullName: String
+  }
+
+  input ContactInfoInputData {
+    mobNo: String
+    skypeId: String
+    facebookId: String
+    gmailId: String
+    website: String
+  }
+
   input CourseInputData {
     bgImage: String!
     categories: [String!]!
@@ -20,6 +32,12 @@ module.exports = gql`
     rating: Int
     tags: [String!]
     title: String!
+  }
+
+  input EducationInfoInputData {
+    school: String
+    college: String
+    workplace: String
   }
 
   input LoginInputData {
@@ -42,6 +60,12 @@ module.exports = gql`
     rating: Int
     title: String!
     type: QuestionPaperTypeEnum!
+  }
+
+  input PersonalInfoInputData {
+    gender: String!
+    country: String
+    dob: String
   }
 
   input QuestionInputData {
@@ -74,6 +98,16 @@ module.exports = gql`
     type: QuestionPaperTypeEnum!
   }
 
+  input UserInputData {
+    email: String
+    username: String
+    password: String
+    basicInfo: BasicInfoInputData
+    contactInfo: ContactInfoInputData
+    educationInfo: EducationInfoInputData
+    personalInfo: PersonalInfoInputData
+  }
+
   # =======================Interface================
 
   # =======================Types====================
@@ -86,9 +120,7 @@ module.exports = gql`
   }
 
   type BasicInfo {
-    email: String!
     fullName: String!
-    username: String!
   }
 
   type ContactInfo {
@@ -116,6 +148,12 @@ module.exports = gql`
     college: String
     school: String
     workplace: String
+  }
+
+  type NormalResponse {
+    status: String!
+    code: Int!
+    msg: String!
   }
 
   type Option {
@@ -181,16 +219,16 @@ module.exports = gql`
   }
 
   type User {
+    email: String!
+    username: String!
     basicInfo: BasicInfo
     bgImage: String!
     contactInfo: ContactInfo
     educationInfo: EducationInfo
-    email: String!
-    interviewDreamScore: [Score!]!
+    interviewDreamScore: [Score!]
     personalInfo: PersonalInfo
     profileImage: String!
     publicProfileUrl: String
-    username: String!
   }
 
   # ====================Root Query=============
@@ -199,18 +237,20 @@ module.exports = gql`
     me: User!
     question: Question!
     questions: QuestionData!
-    paper: Paper!
+    paper(id: ID!): Paper!
     papers: PaperData!
     test: Test!
   }
 
   # ====================Root Mutation==========
   type Mutation {
+    selectQuestionsForPaper(paperId: ID!, questionIds: [ID]!): NormalResponse!
     createCourse(courseInput: CourseInputData!): Course!
     createPaper(paperInput: PaperInputData!): Paper!
     createQuestion(questionInput: QuestionInputData!): Question!
     createTest(testInput: TestInputData!): Test!
     login(loginInput: LoginInputData!): AuthenticationData!
     register(registerInput: RegisterInputData!): AuthenticationData!
+    updateUserProfile(userInput: UserInputData!): User!
   }
 `;

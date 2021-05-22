@@ -1,16 +1,23 @@
 const { mockPaper } = require('../mock/mock-data');
 const Paper = require('../../models/paper');
+const Question = require('../../models/question');
 const errorMsg = require('../../util/contants/error-code');
 const addError = require('../../util/add-error');
 
-exports.getPaper = function (args, req) {
-  return mockPaper;
+exports.getPaper = async function (parent, args, context, info) {
+  const fetchedPaper = await Paper.findById(args.id).populate('questions');
+  if (!fetchedPaper) {
+    addError(errorMsg.pprNotExist, 'Paper does not exist.', 404);
+  }
+  return fetchedPaper;
 };
 
-exports.getPapers = function (args, req) {
+exports.getPapers = async function (args, req) {
+  const fetchedPaperCount = await Paper.find().countDocuments();
+  const fetchedPaper = await Paper.find().populate('questions');
   return {
-    numberOfPapers: 1,
-    papers: [mockPaper],
+    numberOfPapers: fetchedPaperCount,
+    papers: [fetchedPaper],
   };
 };
 
@@ -28,4 +35,31 @@ exports.createPaper = async function (parent, args, context, info) {
 
   const createdPaper = await paper.save();
   return createdPaper;
+};
+
+exports.selectQuestionsForPaper = async function (parent, args, context, info) {
+  const questionIds = args.questionIds;
+  const paperId = args.paperId;
+  const fetchedPaper = await Paper.findById(paperId);
+  if (!fetchedPaper) {
+    addError(errorMsg.pprNotExist, 'Paper does not exist.', 404);
+  }
+  const fetchedQuestionsCount = await Question.find({
+    _id: questionIds,
+  }).countDocuments();
+  if (!fetchedQuestionsCount) {
+    addError(errorMsg.qstnNotExist, 'No question found.', 404);
+  }
+
+  if (fetchedQuestionsCount < questionIds.length) {
+    addError(errorMsg.qstnNotExist, 'Could not found some questions.', 404);
+  }
+  fetchedPaper.questions = questionIds;
+  const updatedPaper = await fetchedPaper.save();
+  console.log(updatedPaper);
+  return {
+    status: 'OK',
+    code: 200,
+    msg: 'Questions updated to Paper.',
+  };
 };

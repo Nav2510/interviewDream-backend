@@ -58,6 +58,46 @@ exports.register = async function (parent, args, context, info) {
   };
 };
 
+exports.updateUserProfile = async function (parent, args, context, info) {
+  // TODO: Find user by logged in id instead of hardcoded
+  const user = await User.findById('60a932ba131fcc35685d4833');
+  if (!user) {
+    addError(errorMsg.userNotFound, 'User not found', 404);
+  }
+  if (args.userInput.basicInfo) {
+    user['basicInfo'] = args.userInput.basicInfo;
+  }
+  if (args.userInput.contactInfo) {
+    user['contactInfo'] = args.userInput.contactInfo;
+  }
+  if (args.userInput.educationInfo) {
+    user['educationInfo'] = args.userInput.educationInfo;
+  }
+  if (args.userInput.personalInfo) {
+    user['personalInfo'] = {
+      ...args.userInput.personalInfo,
+      dob: new Date(args.userInput.personalInfo.dob),
+    };
+  }
+  const updatedUser = await user.save();
+  // TODO: Try using below code
+  //  return { ...createdUser._doc, _id: createdUser._id.toString() };
+  return {
+    ...updatedUser,
+    bgImage: updatedUser.bgImage,
+    profileImage: updatedUser.profileImage,
+    basicInfo: updatedUser.basicInfo,
+    contactInfo: updatedUser.contactInfo,
+    educationInfo: updatedUser.educationInfo,
+    personalInfo: {
+      ...updatedUser.personalInfo,
+      country: updatedUser.personalInfo.country,
+      gender: updatedUser.personalInfo.gender,
+      dob: updatedUser.personalInfo.dob.toString(),
+    },
+  };
+};
+
 function createToken(user) {
   return jwt.sign(
     {
