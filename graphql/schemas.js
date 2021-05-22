@@ -10,10 +10,68 @@ module.exports = gql`
   }
 
   # =======================Input====================
-  input RegisterInputData {
-    username: String!
-    password: String!
+  input CourseInputData {
+    bgImage: String!
+    categories: [String!]!
+    description: String
+    papers: [PaperInputData!]
+    price: Int
+    questions: [QuestionInputData!]
+    rating: Int
+    tags: [String!]
+    title: String!
+  }
+
+  input LoginInputData {
     email: String!
+    password: String!
+  }
+
+  input OptionInputData {
+    label: String!
+    value: String!
+    isAnswer: Boolean
+  }
+
+  input PaperInputData {
+    author: String
+    categories: [String!]!
+    description: String
+    difficulty: Float!
+    questions: [QuestionInputData!]
+    rating: Int
+    title: String!
+    type: QuestionPaperTypeEnum!
+  }
+
+  input QuestionInputData {
+    categories: [String!]!
+    description: String
+    difficulty: Float!
+    explanation: String
+    hasExplanation: Boolean!
+    marks: Int
+    options: [OptionInputData!]
+    order: Int
+    type: QuestionPaperTypeEnum!
+  }
+
+  input RegisterInputData {
+    email: String!
+    password: String!
+    username: String!
+  }
+
+  input TestInputData {
+    author: String
+    categories: [String!]!
+    description: String
+    maxScore: Int!
+    maxTime: Int!
+    numberOfQuestions: Int
+    questions: [QuestionInputData!]
+    title: String!
+    type: QuestionPaperTypeEnum!
   }
 
   # =======================Interface================
@@ -22,9 +80,9 @@ module.exports = gql`
   # TODO: Verify type with mongoose schema for all types
 
   type AuthenticationData {
-    userId: String!
     accessToken: String!
     expiresIn: Int!
+    userId: String!
   }
 
   type BasicInfo {
@@ -43,15 +101,15 @@ module.exports = gql`
   }
 
   type Course {
-    title: String!
-    description: String
-    price: Int!
     bgImage: String!
+    categories: [String!]!
+    description: String
     papers: [Paper!]
+    price: Int
     questions: [Question!]
+    rating: Int
     tags: [String!]
-    categories: [String!]
-    rating: Int!
+    title: String!
   }
 
   type EducationInfo {
@@ -90,7 +148,7 @@ module.exports = gql`
 
   type Question {
     categories: [String!]!
-    description: String
+    description: String!
     difficulty: Int!
     explanation: String
     hasExplanation: Boolean!
@@ -111,15 +169,15 @@ module.exports = gql`
   }
 
   type Test {
-    title: String!
-    description: String
     author: String
-    type: QuestionPaperTypeEnum!
     categories: [String!]!
-    questions: [Question!]!
-    numberOfQuestions: Int!
+    description: String
     maxScore: Int!
-    maxTime: String!
+    maxTime: Int!
+    numberOfQuestions: Int!
+    questions: [Question!]
+    title: String!
+    type: QuestionPaperTypeEnum!
   }
 
   type User {
@@ -148,7 +206,11 @@ module.exports = gql`
 
   # ====================Root Mutation==========
   type Mutation {
-    login: AuthenticationData!
+    createCourse(courseInput: CourseInputData!): Course!
+    createPaper(paperInput: PaperInputData!): Paper!
+    createQuestion(questionInput: QuestionInputData!): Question!
+    createTest(testInput: TestInputData!): Test!
+    login(loginInput: LoginInputData!): AuthenticationData!
     register(registerInput: RegisterInputData!): AuthenticationData!
   }
 `;

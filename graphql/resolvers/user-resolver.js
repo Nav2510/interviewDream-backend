@@ -16,8 +16,23 @@ exports.getCurrentUser = function (args, req) {
   return mockUser;
 };
 
-exports.login = function (args, req) {
-  console.log(args);
+exports.login = async function (parent, args, context, info) {
+  const email = args.loginInput.email;
+  const password = args.loginInput.password;
+  const user = await User.findOne({ email });
+  if (!user) {
+    addError(errorMsg.userNotFound, 'User does not exists.', 404);
+  }
+  const isEqual = await bcrypt.compare(password, user.password);
+  if (!isEqual) {
+    addError(errorMsg.passwordIncorrect, 'Enter password is incorrect.', 401);
+  }
+  const token = createToken(user);
+  return {
+    accessToken: token,
+    expiresIn: TOKEN_EXPIRES_TIME_NUMBER,
+    userId: user._id,
+  };
 };
 
 exports.register = async function (parent, args, context, info) {
@@ -35,7 +50,16 @@ exports.register = async function (parent, args, context, info) {
     email,
   });
   const createdUser = await user.save();
-  const token = jwt.sign(
+  const token = createToken(user);
+  return {
+    userId: createdUser._id,
+    accessToken: token,
+    expiresIn: TOKEN_EXPIRES_TIME_NUMBER,
+  };
+};
+
+function createToken(user) {
+  return jwt.sign(
     {
       userId: user._id.toString(),
       email: user.email,
@@ -43,9 +67,4 @@ exports.register = async function (parent, args, context, info) {
     APPLICATION_SECRET,
     { expiresIn: TOKEN_EXPIRES_TIME }
   );
-  return {
-    userId: createdUser._id,
-    accessToken: token,
-    expiresIn: TOKEN_EXPIRES_TIME_NUMBER,
-  };
-};
+}
