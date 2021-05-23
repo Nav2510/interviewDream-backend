@@ -2,8 +2,10 @@ const Paper = require('../../models/paper');
 const Question = require('../../models/question');
 const errorMsg = require('../../util/contants/error-code');
 const addError = require('../../util/add-error');
+const { authGuard } = require('../../util/auth-guard');
 
 exports.getPaper = async function (parent, args, context, info) {
+  authGuard(context);
   const fetchedPaper = await Paper.findById(args.id).populate('questions');
   if (!fetchedPaper) {
     addError(errorMsg.pprNotExist, 'Paper does not exist.', 404);
@@ -12,6 +14,7 @@ exports.getPaper = async function (parent, args, context, info) {
 };
 
 exports.getPapers = async function (parent, args, context, info) {
+  authGuard(context);
   const fetchedPaperCount = await Paper.find().countDocuments();
   const fetchedPaper = await Paper.find();
   return {
@@ -21,6 +24,7 @@ exports.getPapers = async function (parent, args, context, info) {
 };
 
 exports.createPaper = async function (parent, args, context, info) {
+  authGuard(context);
   // TODO: Validate input for difficulty, categories,marks
   const title = args.paperInput.title;
   const type = args.paperInput.type;
@@ -37,6 +41,7 @@ exports.createPaper = async function (parent, args, context, info) {
 };
 
 exports.selectQuestionsForPaper = async function (parent, args, context, info) {
+  authGuard(context);
   const questionIds = args.questionIds;
   const paperId = args.paperId;
   const fetchedPaper = await Paper.findById(paperId);
@@ -63,10 +68,11 @@ exports.selectQuestionsForPaper = async function (parent, args, context, info) {
 };
 
 exports.deletePaper = async function (parent, args, context, info) {
+  authGuard(context);
   const id = args.id;
   const fetchedPaper = await Paper.findById(id);
   if (!fetchedPaper) {
-    addError(errorMsg.pprNotExist, 'Paper does not exist.');
+    addError(errorMsg.pprNotExist, 'Paper does not exist.', 404);
   }
   await Paper.findByIdAndDelete(id);
   return {

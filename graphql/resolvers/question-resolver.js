@@ -1,8 +1,10 @@
 const Question = require('../../models/question');
 const addError = require('../../util/add-error');
 const errorMsg = require('../../util/contants/error-code');
+const { authGuard } = require('../../util/auth-guard');
 
 exports.getQuestions = async function (parent, args, context, info) {
+  authGuard(context);
   const questionCounts = await Question.find().countDocuments();
   const questions = await Question.find();
   if (!questions) {
@@ -15,6 +17,7 @@ exports.getQuestions = async function (parent, args, context, info) {
 };
 
 exports.getQuestion = async function (parent, args, context, info) {
+  authGuard(context);
   const question = await Question.findById(args.id);
   if (!question) {
     addError(errorMsg.qstnNotExist, 'Question not found', 404);
@@ -23,6 +26,7 @@ exports.getQuestion = async function (parent, args, context, info) {
 };
 
 exports.createQuestion = async function (parent, args, context, info) {
+  authGuard(context);
   // TODO: Validate input for difficulty, categories,marks
   const description = args.questionInput.description;
   const type = args.questionInput.type;
@@ -42,11 +46,12 @@ exports.createQuestion = async function (parent, args, context, info) {
 };
 
 exports.updateQuestion = async function (parent, args, context, info) {
+  authGuard(context);
   // TODO: Validate input for difficulty, categories,marks
   const id = args.id;
   const fetchedQuestion = await Question.findById(id);
   if (!fetchedQuestion) {
-    addError(errorMsg.qstnNotExist, 'Question does not exist.');
+    addError(errorMsg.qstnNotExist, 'Question does not exist.', 404);
   }
   const updatedQuestion = await Question.findOneAndUpdate(
     { _id: id },
@@ -57,11 +62,12 @@ exports.updateQuestion = async function (parent, args, context, info) {
 };
 
 exports.deleteQuestion = async function (parent, args, context, info) {
+  authGuard(context);
   // TODO: Validate input for difficulty, categories,marks
   const id = args.id;
   const fetchedQuestion = await Question.findById(id);
   if (!fetchedQuestion) {
-    addError(errorMsg.qstnNotExist, 'Question does not exist.');
+    addError(errorMsg.qstnNotExist, 'Question does not exist.', 404);
   }
   await Question.findByIdAndDelete(id);
   return {

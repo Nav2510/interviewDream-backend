@@ -2,8 +2,10 @@ const errorMsg = require('../../util/contants/error-code');
 const addError = require('../../util/add-error');
 const Test = require('../../models/test');
 const Question = require('../../models/question');
+const { authGuard } = require('../../util/auth-guard');
 
 exports.getTest = async function (parent, args, context, info) {
+  authGuard(context);
   const fetchedTest = await Test.findById(args.id).populate('questions');
   if (!fetchedTest) {
     addError(errorMsg.testNotExist, 'Test does not exist.', 404);
@@ -15,6 +17,7 @@ exports.getTest = async function (parent, args, context, info) {
 };
 
 exports.getTests = async function (parent, args, context, info) {
+  authGuard(context);
   const testsCount = await Test.find().countDocuments();
   const fetchedTests = await Test.find();
   if (!fetchedTests) {
@@ -27,6 +30,7 @@ exports.getTests = async function (parent, args, context, info) {
 };
 
 exports.createTest = async function (parent, args, context, info) {
+  authGuard(context);
   // TODO: Validate input for difficulty, categories,numberofQuestions,maxScore, maxTime
   const type = args.testInput.type;
   const title = args.testInput.title;
@@ -43,6 +47,7 @@ exports.createTest = async function (parent, args, context, info) {
 };
 
 exports.selectQuestionsForTest = async function (parent, args, context, info) {
+  authGuard(context);
   const questionIds = args.questionIds;
   const testId = args.testId;
   const fetchedTest = await Test.findById(testId);
@@ -69,6 +74,7 @@ exports.selectQuestionsForTest = async function (parent, args, context, info) {
 };
 
 exports.deleteTest = async function (parent, args, context, info) {
+  authGuard(context);
   const id = args.id;
   const fetchedTest = await Test.findById(id);
   if (!fetchedTest) {

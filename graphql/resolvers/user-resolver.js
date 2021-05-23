@@ -10,10 +10,12 @@ const {
   TOKEN_EXPIRES_TIME,
   TOKEN_EXPIRES_TIME_NUMBER,
 } = require('../../util/contants/global');
+const { authGuard } = require('../../util/auth-guard');
 
 exports.getCurrentUser = async function (parent, args, context, info) {
-  // TODO: Find user by logged in id instead of hardcoded
-  const user = await User.findById('60a932ba131fcc35685d4833');
+  authGuard(context);
+  const userId = context.user.userId;
+  const user = await User.findById(userId);
   if (!user) {
     addError(errorMsg.userNotFound, 'User not found', 404);
   }
@@ -25,8 +27,9 @@ exports.getCurrentUser = async function (parent, args, context, info) {
 };
 
 exports.getProfile = async function (parent, args, context, info) {
-  // TODO: Find user by logged in id instead of hardcoded
-  const user = await User.findById('60a932ba131fcc35685d4833');
+  authGuard(context);
+  const userId = context.user.userId;
+  const user = await User.findById(userId);
   if (!user) {
     addError(errorMsg.userNotFound, 'User not found', 404);
   }
@@ -76,6 +79,7 @@ exports.register = async function (parent, args, context, info) {
 };
 
 exports.updateUserProfile = async function (parent, args, context, info) {
+  authGuard(context);
   // TODO: Find user by logged in id instead of hardcoded
   const user = await User.findById('60a932ba131fcc35685d4833');
   if (!user) {

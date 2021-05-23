@@ -9,6 +9,7 @@ const errorCode = {
   pprNotExist: 'PPR_NOT_EXIST',
   qstnNotExist: 'QSTN_NOT_EXIST',
   courseNotExist: 'COURSE_NOT_EXIST',
+  notAuth: 'NOT_AUTH',
 };
 
 module.exports = errorCode;

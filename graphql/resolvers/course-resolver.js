@@ -3,8 +3,10 @@ const Question = require('../../models/question');
 const Paper = require('../../models/paper');
 const errorMsg = require('../../util/contants/error-code');
 const addError = require('../../util/add-error');
+const { authGuard } = require('../../util/auth-guard');
 
 exports.getCourse = async function (parent, args, context, info) {
+  authGuard(context);
   const fetchedCourse = await Course.findById(args.id)
     .populate('questions')
     .populate('papers');
@@ -15,6 +17,7 @@ exports.getCourse = async function (parent, args, context, info) {
 };
 
 exports.getCourses = async function (parent, args, context, info) {
+  authGuard(context);
   const coursesCount = await Course.find().countDocuments();
   const fetchedCourses = await Course.find();
   if (!fetchedCourses) {
@@ -27,6 +30,7 @@ exports.getCourses = async function (parent, args, context, info) {
 };
 
 exports.createCourse = async function (parent, args, context, info) {
+  authGuard(context);
   // TODO: Validate input for difficulty, categories,numberofQuestions,maxScore, maxTime
   const title = args.courseInput.title;
   const fetchedCourse = await Course.findOne({ title });
@@ -50,6 +54,7 @@ exports.selectQuestionsForCourse = async function (
   context,
   info
 ) {
+  authGuard(context);
   const questionIds = args.questionIds;
   const courseId = args.courseId;
   const fetchedCourse = await Course.findById(courseId);
@@ -76,6 +81,7 @@ exports.selectQuestionsForCourse = async function (
 };
 
 exports.selectPapersForCourse = async function (parent, args, context, info) {
+  authGuard(context);
   const paperIds = args.paperIds;
   const courseId = args.courseId;
   const fetchedCourse = await Course.findById(courseId);

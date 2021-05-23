@@ -1,19 +1,26 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server-express');
 const compression = require('compression');
 
 const typeDefs = require('./graphql/schemas');
 const resolvers = require('./graphql/resolvers');
+const { authorizeUser } = require('./middleware/auth');
 
 const port = process.env.PORT || 3001;
 
 const app = express();
 
+const context = ({ req }) => {
+  const user = authorizeUser(req);
+  return { user };
+};
+
 // TODO: Remove playground and introspection once complete integration with Client is done
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context,
   introspection: true,
   playground: true,
   formatError: (error) => {
