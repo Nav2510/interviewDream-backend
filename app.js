@@ -89,6 +89,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Redirecting '/' to '/graphql'
+app.get('/', (req, res, next) => {
+  res.redirect('/graphql');
+});
+
 server.applyMiddleware({ app });
 
 mongoose
