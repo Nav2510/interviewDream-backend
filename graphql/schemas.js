@@ -109,6 +109,38 @@ module.exports = gql`
   }
 
   # =======================Interface================
+  interface ICourse {
+    _id: ID!
+    bgImage: String!
+    categories: [String!]!
+    description: String
+    price: Int
+    rating: Int
+    tags: [String!]
+    title: String!
+  }
+
+  interface IPaper {
+    _id: ID!
+    author: String
+    categories: [String!]!
+    description: String
+    difficulty: Int
+    rating: Int
+    title: String!
+    type: QuestionPaperTypeEnum!
+  }
+
+  interface ITest {
+    _id: ID!
+    author: String
+    categories: [String!]!
+    description: String
+    maxScore: Int!
+    maxTime: Int!
+    title: String!
+    type: QuestionPaperTypeEnum!
+  }
 
   # =======================Types====================
   # TODO: Verify type with mongoose schema for all types
@@ -132,16 +164,33 @@ module.exports = gql`
     website: String
   }
 
-  type Course {
+  type Course implements ICourse {
+    _id: ID!
     bgImage: String!
     categories: [String!]!
     description: String
-    papers: [Paper!]
+    papers: [Papers!]
     price: Int
     questions: [Question!]
     rating: Int
     tags: [String!]
     title: String!
+  }
+
+  type Courses {
+    id: ID!
+    bgImage: String!
+    categories: [String!]!
+    description: String
+    price: Int
+    rating: Int
+    tags: [String!]
+    title: String!
+  }
+
+  type CourseData {
+    numberOfCourses: Int!
+    courses: [Courses!]!
   }
 
   type EducationInfo {
@@ -162,12 +211,24 @@ module.exports = gql`
     value: String!
   }
 
-  type Paper {
+  type Paper implements IPaper {
+    _id: ID!
     author: String
     categories: [String!]!
     description: String
     difficulty: Int
+    rating: Int
+    title: String!
+    type: QuestionPaperTypeEnum!
     questions: [Question!]
+  }
+
+  type Papers implements IPaper {
+    _id: ID!
+    author: String
+    categories: [String!]!
+    description: String
+    difficulty: Int
     rating: Int
     title: String!
     type: QuestionPaperTypeEnum!
@@ -175,7 +236,7 @@ module.exports = gql`
 
   type PaperData {
     numberOfPapers: Int!
-    papers: [Paper!]!
+    papers: [Papers!]!
   }
 
   type PersonalInfo {
@@ -185,6 +246,7 @@ module.exports = gql`
   }
 
   type Question {
+    _id: ID!
     categories: [String!]!
     description: String!
     difficulty: Int!
@@ -206,7 +268,8 @@ module.exports = gql`
     score: Int!
   }
 
-  type Test {
+  type Test implements ITest {
+    _id: ID!
     author: String
     categories: [String!]!
     description: String
@@ -218,7 +281,30 @@ module.exports = gql`
     type: QuestionPaperTypeEnum!
   }
 
+  type Tests implements ITest {
+    _id: ID!
+    author: String
+    categories: [String!]!
+    description: String
+    maxScore: Int!
+    maxTime: Int!
+    title: String!
+    type: QuestionPaperTypeEnum!
+  }
+
+  type TestData {
+    numberOfTests: Int!
+    tests: [Tests!]!
+  }
+
   type User {
+    _id: ID!
+    email: String!
+    username: String!
+  }
+
+  type Profile {
+    _id: ID!
     email: String!
     username: String!
     basicInfo: BasicInfo
@@ -233,24 +319,34 @@ module.exports = gql`
 
   # ====================Root Query=============
   type Query {
-    course: Course!
+    course(id: ID!): Course!
+    courses: CourseData!
     me: User!
-    question: Question!
-    questions: QuestionData!
     paper(id: ID!): Paper!
     papers: PaperData!
-    test: Test!
+    profile: Profile!
+    question(id: ID!): Question!
+    questions: QuestionData!
+    test(id: ID!): Test!
+    tests: TestData!
   }
 
   # ====================Root Mutation==========
   type Mutation {
-    selectQuestionsForPaper(paperId: ID!, questionIds: [ID]!): NormalResponse!
     createCourse(courseInput: CourseInputData!): Course!
     createPaper(paperInput: PaperInputData!): Paper!
     createQuestion(questionInput: QuestionInputData!): Question!
     createTest(testInput: TestInputData!): Test!
+    deleteQuestion(id: ID!): NormalResponse!
+    deletePaper(id: ID!): NormalResponse!
+    deleteTest(id: ID!): NormalResponse!
     login(loginInput: LoginInputData!): AuthenticationData!
     register(registerInput: RegisterInputData!): AuthenticationData!
+    selectQuestionsForCourse(courseId: ID!, questionIds: [ID]!): NormalResponse!
+    selectQuestionsForPaper(paperId: ID!, questionIds: [ID]!): NormalResponse!
+    selectQuestionsForTest(testId: ID!, questionIds: [ID]!): NormalResponse!
+    selectPapersForCourse(courseId: ID!, paperIds: [ID]!): NormalResponse!
+    updateQuestion(id: ID!, questionInput: QuestionInputData!): Question!
     updateUserProfile(userInput: UserInputData!): User!
   }
 `;

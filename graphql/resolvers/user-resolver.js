@@ -1,7 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { mockUser } = require('../mock/mock-data');
 const User = require('../../models/user');
 const errorMsg = require('../../util/contants/error-code');
 const addError = require('../../util/add-error');
@@ -12,8 +11,26 @@ const {
   TOKEN_EXPIRES_TIME_NUMBER,
 } = require('../../util/contants/global');
 
-exports.getCurrentUser = function (args, req) {
-  return mockUser;
+exports.getCurrentUser = async function (parent, args, context, info) {
+  // TODO: Find user by logged in id instead of hardcoded
+  const user = await User.findById('60a932ba131fcc35685d4833');
+  if (!user) {
+    addError(errorMsg.userNotFound, 'User not found', 404);
+  }
+  return {
+    _id: user._id.toString(),
+    email: user.email,
+    username: user.username,
+  };
+};
+
+exports.getProfile = async function (parent, args, context, info) {
+  // TODO: Find user by logged in id instead of hardcoded
+  const user = await User.findById('60a932ba131fcc35685d4833');
+  if (!user) {
+    addError(errorMsg.userNotFound, 'User not found', 404);
+  }
+  return user;
 };
 
 exports.login = async function (parent, args, context, info) {

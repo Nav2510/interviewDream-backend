@@ -1,4 +1,3 @@
-const { mockPaper } = require('../mock/mock-data');
 const Paper = require('../../models/paper');
 const Question = require('../../models/question');
 const errorMsg = require('../../util/contants/error-code');
@@ -12,12 +11,12 @@ exports.getPaper = async function (parent, args, context, info) {
   return fetchedPaper;
 };
 
-exports.getPapers = async function (args, req) {
+exports.getPapers = async function (parent, args, context, info) {
   const fetchedPaperCount = await Paper.find().countDocuments();
-  const fetchedPaper = await Paper.find().populate('questions');
+  const fetchedPaper = await Paper.find();
   return {
     numberOfPapers: fetchedPaperCount,
-    papers: [fetchedPaper],
+    papers: [...fetchedPaper],
   };
 };
 
@@ -55,11 +54,24 @@ exports.selectQuestionsForPaper = async function (parent, args, context, info) {
     addError(errorMsg.qstnNotExist, 'Could not found some questions.', 404);
   }
   fetchedPaper.questions = questionIds;
-  const updatedPaper = await fetchedPaper.save();
-  console.log(updatedPaper);
+  await fetchedPaper.save();
   return {
     status: 'OK',
     code: 200,
     msg: 'Questions updated to Paper.',
+  };
+};
+
+exports.deletePaper = async function (parent, args, context, info) {
+  const id = args.id;
+  const fetchedPaper = await Paper.findById(id);
+  if (!fetchedPaper) {
+    addError(errorMsg.pprNotExist, 'Paper does not exist.');
+  }
+  await Paper.findByIdAndDelete(id);
+  return {
+    status: 'OK',
+    code: 200,
+    msg: 'Paper deleted.',
   };
 };
