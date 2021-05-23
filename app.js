@@ -1,7 +1,12 @@
+const path = require('path');
+
 const express = require('express');
 const mongoose = require('mongoose');
 const { ApolloServer } = require('apollo-server-express');
 const compression = require('compression');
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 
 const typeDefs = require('./graphql/schemas');
 const resolvers = require('./graphql/resolvers');
@@ -10,6 +15,27 @@ const { authorizeUser } = require('./middleware/auth');
 const port = process.env.PORT || 3001;
 
 const app = express();
+
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, uuidv4() + '-' + file.originalname);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
 
 const context = ({ req }) => {
   const user = authorizeUser(req);
@@ -42,6 +68,14 @@ const server = new ApolloServer({
 
 // Optimizing using compression
 app.use(compression());
+
+app.use(bodyParser.urlencoded()); // x-www-form-urlencoded => <from>
+app.use(bodyParser.json()); //application/json
+
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
+);
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // TODO: Move is to middleware folder
 // Allows various CORS headers, methods
