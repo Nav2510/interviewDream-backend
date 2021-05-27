@@ -65,4 +65,19 @@ module.exports = {
     deleteTest: deleteTest,
     updateUserProfile: updateUserProfile,
   },
+  ICourse: {
+    __resolveType() {
+      return null;
+    },
+  },
+  IPaper: {
+    __resolveType() {
+      return null;
+    },
+  },
+  ITest: {
+    __resolveType() {
+      return null;
+    },
+  },
 };

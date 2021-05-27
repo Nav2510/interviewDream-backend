@@ -69,7 +69,6 @@ const server = new ApolloServer({
 // Optimizing using compression
 app.use(compression());
 
-app.use(bodyParser.urlencoded()); // x-www-form-urlencoded => <from>
 app.use(bodyParser.json()); //application/json
 
 app.use(
@@ -97,7 +96,10 @@ app.get('/', (req, res, next) => {
 server.applyMiddleware({ app });
 
 mongoose
-  .connect(process.env.MONGO_ATLAS_URI)
+  .connect(process.env.MONGO_ATLAS_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     console.log('Mongo atlas connected!!');
 
