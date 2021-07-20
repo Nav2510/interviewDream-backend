@@ -12,7 +12,7 @@ const courseSchema = new Schema({
     type: Number,
     default: 0,
   },
-  bgImage: {
+  bgImagePath: {
     type: String,
     require: true,
   },

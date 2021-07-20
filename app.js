@@ -111,4 +111,7 @@ mongoose
   })
   .catch((error) => {
     console.error(`Mongodb connection failed with error: ${error}`);
+    cosnole.error(
+      `Tips: Check for the network access in case of mongo connection failure`
+    );
   });

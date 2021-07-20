@@ -23,7 +23,7 @@ module.exports = gql`
   }
 
   input CourseInputData {
-    bgImage: String!
+    bgImagePath: String!
     categories: [String!]!
     description: String
     papers: [PaperInputData!]
@@ -111,7 +111,7 @@ module.exports = gql`
   # =======================Interface================
   interface ICourse {
     _id: ID!
-    bgImage: String!
+    bgImagePath: String!
     categories: [String!]!
     description: String
     price: Int
@@ -166,7 +166,7 @@ module.exports = gql`
 
   type Course implements ICourse {
     _id: ID!
-    bgImage: String!
+    bgImagePath: String!
     categories: [String!]!
     description: String
     papers: [Papers!]
@@ -178,8 +178,8 @@ module.exports = gql`
   }
 
   type Courses {
-    id: ID!
-    bgImage: String!
+    _id: ID!
+    bgImagePath: String!
     categories: [String!]!
     description: String
     price: Int
@@ -308,12 +308,12 @@ module.exports = gql`
     email: String!
     username: String!
     basicInfo: BasicInfo
-    bgImage: String!
+    bgImagePath: String!
     contactInfo: ContactInfo
     educationInfo: EducationInfo
     interviewDreamScore: [Score!]
     personalInfo: PersonalInfo
-    profileImage: String!
+    profileImagePath: String!
     publicProfileUrl: String
   }
 
