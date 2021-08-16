@@ -1,21 +1,175 @@
-const { buildSchema } = require('graphql');
+// const { buildSchema } = require('graphql');
+const { gql } = require('apollo-server-express');
 
-module.exports = buildSchema(`
-  # ======================Enums=====================
+// Construct a schema, using GraphQL schema language
+module.exports = gql`
+  # =======================Enums====================
   enum QuestionPaperTypeEnum {
     MULTIPLE_CORRECT
     SINGLE_CORRECT
   }
 
+  enum CourseTagEnum {
+    BEST_SELLER
+    TOP_RATED
+    POPULAR
+    HOT
+    NEW
+  }
+
+  enum CourseCategoryEnum {
+    JAVA
+    ALGORITHM
+    NODE
+    BACKEND
+    LANGUAGE
+    WEB
+  }
+
+  # =======================Input====================
+  input BasicInfoInputData {
+    fullName: String
+  }
+
+  input ContactInfoInputData {
+    mobNo: String
+    skypeId: String
+    facebookId: String
+    gmailId: String
+    website: String
+  }
+
+  input CourseInputData {
+    bgImagePath: String!
+    categories: [CourseCategoryEnum!]!
+    description: String
+    papers: [PaperInputData!]
+    price: Int
+    questions: [QuestionInputData!]
+    rating: Int
+    tags: [CourseTagEnum!]
+    title: String!
+  }
+
+  input EducationInfoInputData {
+    school: String
+    college: String
+    workplace: String
+  }
+
+  input LoginInputData {
+    email: String!
+    password: String!
+  }
+
+  input OptionInputData {
+    label: String!
+    value: String!
+    isAnswer: Boolean
+  }
+
+  input PaperInputData {
+    author: String
+    categories: [String!]!
+    description: String
+    difficulty: Float!
+    questions: [QuestionInputData!]
+    rating: Int
+    title: String!
+    type: QuestionPaperTypeEnum!
+  }
+
+  input PersonalInfoInputData {
+    gender: String!
+    country: String
+    dob: String
+  }
+
+  input QuestionInputData {
+    categories: [String!]!
+    description: String
+    difficulty: Float!
+    explanation: String
+    hasExplanation: Boolean!
+    marks: Int
+    options: [OptionInputData!]
+    order: Int
+    type: QuestionPaperTypeEnum!
+  }
+
+  input RegisterInputData {
+    email: String!
+    password: String!
+    username: String!
+  }
+
+  input TestInputData {
+    author: String
+    categories: [String!]!
+    description: String
+    maxScore: Int!
+    maxTime: Int!
+    numberOfQuestions: Int
+    questions: [QuestionInputData!]
+    title: String!
+    type: QuestionPaperTypeEnum!
+  }
+
+  input UserInputData {
+    email: String
+    username: String
+    password: String
+    basicInfo: BasicInfoInputData
+    contactInfo: ContactInfoInputData
+    educationInfo: EducationInfoInputData
+    personalInfo: PersonalInfoInputData
+  }
+
   # =======================Interface================
+  interface ICourse {
+    _id: ID!
+    bgImagePath: String!
+    categories: [CourseCategoryEnum!]!
+    description: String
+    price: Int
+    rating: Int
+    tags: [CourseTagEnum!]
+    title: String!
+  }
+
+  interface IPaper {
+    _id: ID!
+    author: String
+    categories: [String!]!
+    description: String
+    difficulty: Int
+    rating: Int
+    title: String!
+    type: QuestionPaperTypeEnum!
+  }
+
+  interface ITest {
+    _id: ID!
+    author: String
+    categories: [String!]!
+    description: String
+    maxScore: Int!
+    maxTime: Int!
+    title: String!
+    type: QuestionPaperTypeEnum!
+  }
 
   # =======================Types====================
   # TODO: Verify type with mongoose schema for all types
 
+  type AuthenticationData {
+    accessToken: String!
+    expiresIn: Int!
+    userId: String!
+  }
+
   type BasicInfo {
-    email: String!
     fullName: String!
-    username: String!
   }
 
   type ContactInfo {
@@ -27,16 +181,33 @@ module.exports = buildSchema(`
     website: String
   }
 
-  type Course {
-    title: String!
+  type Course implements ICourse {
+    _id: ID!
+    bgImagePath: String!
+    categories: [CourseCategoryEnum!]!
     description: String
-    price: Int!
-    bgImage: String!
-    papers: [Paper!]
+    papers: [Papers!]
+    price: Int
     questions: [Question!]
+    rating: Int
+    tags: [CourseTagEnum!]
+    title: String!
+  }
+
+  type Courses {
+    _id: ID!
+    bgImagePath: String!
+    categories: [CourseCategoryEnum!]!
+    description: String
+    price: Int
+    rating: Int
     tags: [String!]
-    categories: [String!]
-    rating: Int!
+    title: String!
+  }
+
+  type CourseData {
+    numberOfCourses: Int!
+    courses: [Courses!]!
   }
 
   type EducationInfo {
@@ -45,6 +216,11 @@ module.exports = buildSchema(`
     workplace: String
   }
 
+  type NormalResponse {
+    status: String!
+    code: Int!
+    msg: String!
+  }
 
   type Option {
     isAnswer: Boolean!
@@ -52,12 +228,24 @@ module.exports = buildSchema(`
     value: String!
   }
 
-  type Paper {
+  type Paper implements IPaper {
+    _id: ID!
     author: String
     categories: [String!]!
     description: String
     difficulty: Int
+    rating: Int
+    title: String!
+    type: QuestionPaperTypeEnum!
     questions: [Question!]
+  }
+
+  type Papers implements IPaper {
+    _id: ID!
+    author: String
+    categories: [String!]!
+    description: String
+    difficulty: Int
     rating: Int
     title: String!
     type: QuestionPaperTypeEnum!
@@ -65,7 +253,7 @@ module.exports = buildSchema(`
 
   type PaperData {
     numberOfPapers: Int!
-    papers: [Paper!]!
+    papers: [Papers!]!
   }
 
   type PersonalInfo {
@@ -75,8 +263,9 @@ module.exports = buildSchema(`
   }
 
   type Question {
+    _id: ID!
     categories: [String!]!
-    description: String
+    description: String!
     difficulty: Int!
     explanation: String
     hasExplanation: Boolean!
@@ -96,45 +285,85 @@ module.exports = buildSchema(`
     score: Int!
   }
 
-  type Test {
-    title: String!
-    description: String
+  type Test implements ITest {
+    _id: ID!
     author: String
-    type: QuestionPaperTypeEnum!
     categories: [String!]!
-    questions: [Question!]!
-    numberOfQuestions: Int!
+    description: String
     maxScore: Int!
-    maxTime: String!
+    maxTime: Int!
+    numberOfQuestions: Int!
+    questions: [Question!]
+    title: String!
+    type: QuestionPaperTypeEnum!
+  }
+
+  type Tests implements ITest {
+    _id: ID!
+    author: String
+    categories: [String!]!
+    description: String
+    maxScore: Int!
+    maxTime: Int!
+    title: String!
+    type: QuestionPaperTypeEnum!
+  }
+
+  type TestData {
+    numberOfTests: Int!
+    tests: [Tests!]!
   }
 
   type User {
-    basicInfo: BasicInfo
-    bgImage: String!
-    contactInfo: ContactInfo
-    educationInfo: EducationInfo
+    _id: ID!
     email: String!
-    interviewDreamScore: [Score!]!
-    personalInfo: PersonalInfo
-    profileImage: String!
-    publicProfileUrl: String
     username: String!
   }
 
-  # ====================Root Mutation==========
-  # ====================Root Query=============
-  type RootQuery {
-    course: Course!
-    me: User!
-    question: Question!
-    questions: QuestionData!
-    paper: Paper!
-    papers: PaperData!
-    test: Test!
+  type Profile {
+    _id: ID!
+    email: String!
+    username: String!
+    basicInfo: BasicInfo
+    bgImagePath: String!
+    contactInfo: ContactInfo
+    educationInfo: EducationInfo
+    interviewDreamScore: [Score!]
+    personalInfo: PersonalInfo
+    profileImagePath: String!
+    publicProfileUrl: String
   }
 
-  # ======================Schema=================
-  schema {
-    query: RootQuery
+  # ====================Root Query=============
+  type Query {
+    course(id: ID!): Course!
+    courses: CourseData!
+    me: User!
+    paper(id: ID!): Paper!
+    papers: PaperData!
+    profile: Profile!
+    question(id: ID!): Question!
+    questions: QuestionData!
+    test(id: ID!): Test!
+    tests: TestData!
   }
-`);
+
+  # ====================Root Mutation==========
+  type Mutation {
+    createCourse(courseInput: CourseInputData!): Course!
+    createPaper(paperInput: PaperInputData!): Paper!
+    createQuestion(questionInput: QuestionInputData!): Question!
+    createTest(testInput: TestInputData!): Test!
+    deleteQuestion(id: ID!): NormalResponse!
+    deletePaper(id: ID!): NormalResponse!
+    deleteTest(id: ID!): NormalResponse!
+    login(loginInput: LoginInputData!): AuthenticationData!
+    register(registerInput: RegisterInputData!): AuthenticationData!
+    selectQuestionsForCourse(courseId: ID!, questionIds: [ID]!): NormalResponse!
+    selectQuestionsForPaper(paperId: ID!, questionIds: [ID]!): NormalResponse!
+    selectQuestionsForTest(testId: ID!, questionIds: [ID]!): NormalResponse!
+    selectPapersForCourse(courseId: ID!, paperIds: [ID]!): NormalResponse!
+    updateQuestion(id: ID!, questionInput: QuestionInputData!): Question!
+    updateUserProfile(userInput: UserInputData!): User!
+  }
+`;

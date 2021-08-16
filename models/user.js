@@ -7,14 +7,6 @@ const basicInfoSchema = new Schema({
     type: String,
     required: true,
   },
-  email: {
-    type: String,
-    required: true,
-  },
-  username: {
-    type: String,
-    required: true,
-  },
 });
 
 const personalInfoSchema = new Schema({
@@ -48,6 +40,10 @@ const contactInfoSchema = new Schema({
 });
 
 const userSchema = new Schema({
+  email: {
+    type: String,
+    required: true,
+  },
   username: {
     type: String,
     required: true,
@@ -56,22 +52,13 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  email: {
-    type: String,
-    required: true,
-  },
-  publicProfileUrl: {
-    type: String,
-    required: true,
-  },
+  publicProfileUrl: String,
   bgImage: {
     type: String,
-    required: true,
     default: 'defaultbgImage.jpg',
   },
   profileImage: {
     type: String,
-    required: true,
     default: 'defaultProfileImage.jpg',
   },
   interviewDreamScore: [

@@ -1,24 +1,84 @@
+const path = require('path');
+const fs = require('fs');
+
 const express = require('express');
 const mongoose = require('mongoose');
-const { graphqlHTTP } = require('express-graphql');
-const helmet = require('helmet');
+const { ApolloServer } = require('apollo-server-express');
 const compression = require('compression');
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 
-const graphqlSchemas = require('./graphql/schemas');
-const graphqlResolvers = require('./graphql/resolvers');
+const typeDefs = require('./graphql/schemas');
+const resolvers = require('./graphql/resolvers');
+const { authorizeUser } = require('./middleware/auth');
 
 const port = process.env.PORT || 3001;
 
 const app = express();
 
-// Securing app using helmet
-app.use(helmet());
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, uuidv4() + '-' + file.originalname);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+const context = ({ req }) => {
+  const user = authorizeUser(req);
+  return { user };
+};
+
+// TODO: Remove playground and introspection once complete integration with Client is done
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context,
+  introspection: true,
+  playground: true,
+  formatError: (error) => {
+    if (!error.originalError) {
+      return error;
+    }
+    const data = error.originalError.data;
+    const message = error.message;
+    const code = error.originalError.code;
+    const msgCode = error.originalError.msgCode;
+    return {
+      message,
+      status: code,
+      msgCode,
+      data,
+    };
+  },
+});
 
 // Optimizing using compression
 app.use(compression());
 
+app.use(bodyParser.json()); //application/json
+
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
+);
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
 // TODO: Move is to middleware folder
-// Allowing various CORS headers, methods
+// Allows various CORS headers, methods
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -29,24 +89,49 @@ app.use((req, res, next) => {
   next();
 });
 
-// Graphql setup
-app.use(
-  '/graphql',
-  graphqlHTTP({
-    schema: graphqlSchemas,
-    rootValue: graphqlResolvers,
-    graphiql: true,
-  })
-);
+// TODO: Setup authentication
+app.put('post-image', (req, res, next) => {
+  if (!req.file) {
+    return res.status(200).json({ message: 'No file provided' });
+  }
+  if (req.body.oldPath) {
+    clearImage(req.body.oldPath);
+  }
+
+  return res
+    .status(201)
+    .json({ message: 'File stored.', filePath: req.file.path });
+});
+
+// Redirecting '/' to '/graphql'
+app.get('/', (req, res, next) => {
+  res.redirect('/graphql');
+});
+
+server.applyMiddleware({ app });
 
 mongoose
-  .connect(process.env.MONGO_ATLAS_URI)
-  .then((result) => {
-    console.log('Mogno atlas connected!!');
-    app.listen(port, () => {
-      console.log(`Server started on port: ${port}`);
-    });
+  .connect(process.env.MONGO_ATLAS_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log('Mongo atlas connected!!');
+
+    app.listen({ port: port }, () =>
+      console.log(
+        `🚀 Server ready at http://localhost:${port}${server.graphqlPath}`
+      )
+    );
   })
   .catch((error) => {
     console.error(`Mongodb connection failed with error: ${error}`);
+    cosnole.error(
+      `Tips: Check for the network access in case of mongo connection failure`
+    );
   });
+
+const clearImage = (filePath) => {
+  filePath = path.join(__dirname, '..', filePath);
+  fs.unlink(filePath, (error) => console.log(error));
+};

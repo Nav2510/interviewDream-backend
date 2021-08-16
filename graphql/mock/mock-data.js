@@ -52,8 +52,6 @@ const user = {
   ],
   basicInfo: {
     fullName: 'Navdeep Singh',
-    email: 'singh.navdeep2510@gmail.com',
-    username: 'Nav2510',
   },
   personalInfo: {
     gender: 'male',

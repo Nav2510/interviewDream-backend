@@ -14,7 +14,7 @@ const paperSchema = new Schema({
     type: String,
     required: true,
   },
-  categories: [string],
+  categories: [String],
   questions: [{ type: Schema.Types.ObjectId, ref: 'Question' }],
   rating: Number,
 });

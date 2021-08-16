@@ -3,14 +3,18 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const questionSchema = new Schema({
+  categories: [String],
   description: String,
-  order: Number,
-  marks: Number,
+  difficulty: {
+    type: Number,
+    require: true,
+  },
   explanation: String,
   hasExplanation: Boolean,
-  difficulty: Number,
-  categories: [String],
-  type: { type: String, required: true },
+  marks: {
+    type: Number,
+    default: 0,
+  },
   options: [
     {
       label: {
@@ -27,6 +31,8 @@ const questionSchema = new Schema({
       },
     },
   ],
+  order: Number,
+  type: { type: String, required: true },
 });
 
 module.exports = mongoose.model('Question', questionSchema);
