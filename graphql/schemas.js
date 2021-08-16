@@ -9,6 +9,23 @@ module.exports = gql`
     SINGLE_CORRECT
   }
 
+  enum CourseTagEnum {
+    BEST_SELLER
+    TOP_RATED
+    POPULAR
+    HOT
+    NEW
+  }
+
+  enum CourseCategoryEnum {
+    JAVA
+    ALGORITHM
+    NODE
+    BACKEND
+    LANGUAGE
+    WEB
+  }
+
   # =======================Input====================
   input BasicInfoInputData {
     fullName: String
@@ -24,13 +41,13 @@ module.exports = gql`
 
   input CourseInputData {
     bgImagePath: String!
-    categories: [String!]!
+    categories: [CourseCategoryEnum!]!
     description: String
     papers: [PaperInputData!]
     price: Int
     questions: [QuestionInputData!]
     rating: Int
-    tags: [String!]
+    tags: [CourseTagEnum!]
     title: String!
   }
 
@@ -112,11 +129,11 @@ module.exports = gql`
   interface ICourse {
     _id: ID!
     bgImagePath: String!
-    categories: [String!]!
+    categories: [CourseCategoryEnum!]!
     description: String
     price: Int
     rating: Int
-    tags: [String!]
+    tags: [CourseTagEnum!]
     title: String!
   }
 
@@ -167,20 +184,20 @@ module.exports = gql`
   type Course implements ICourse {
     _id: ID!
     bgImagePath: String!
-    categories: [String!]!
+    categories: [CourseCategoryEnum!]!
     description: String
     papers: [Papers!]
     price: Int
     questions: [Question!]
     rating: Int
-    tags: [String!]
+    tags: [CourseTagEnum!]
     title: String!
   }
 
   type Courses {
     _id: ID!
     bgImagePath: String!
-    categories: [String!]!
+    categories: [CourseCategoryEnum!]!
     description: String
     price: Int
     rating: Int

@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -88,6 +89,20 @@ app.use((req, res, next) => {
   next();
 });
 
+// TODO: Setup authentication
+app.put('post-image', (req, res, next) => {
+  if (!req.file) {
+    return res.status(200).json({ message: 'No file provided' });
+  }
+  if (req.body.oldPath) {
+    clearImage(req.body.oldPath);
+  }
+
+  return res
+    .status(201)
+    .json({ message: 'File stored.', filePath: req.file.path });
+});
+
 // Redirecting '/' to '/graphql'
 app.get('/', (req, res, next) => {
   res.redirect('/graphql');
@@ -115,3 +130,8 @@ mongoose
       `Tips: Check for the network access in case of mongo connection failure`
     );
   });
+
+const clearImage = (filePath) => {
+  filePath = path.join(__dirname, '..', filePath);
+  fs.unlink(filePath, (error) => console.log(error));
+};
