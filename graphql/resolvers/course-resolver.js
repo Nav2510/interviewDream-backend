@@ -17,7 +17,6 @@ exports.getCourse = async function (parent, args, context, info) {
 };
 
 exports.getCourses = async function (parent, args, context, info) {
-  authGuard(context);
   const coursesCount = await Course.find().countDocuments();
   const fetchedCourses = await Course.find();
   if (!fetchedCourses) {
