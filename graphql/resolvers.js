@@ -10,6 +10,7 @@ const {
   getPapers,
   deletePaper,
   createPaper,
+  getPapersByCourseId,
   selectQuestionsForPaper,
 } = require('./resolvers/paper-resolver');
 const {
@@ -44,6 +45,7 @@ module.exports = {
     questions: getQuestions,
     paper: getPaper,
     papers: getPapers,
+    getPapersByCourseId: getPapersByCourseId,
     test: getTest,
     tests: getTests,
     profile: getProfile,

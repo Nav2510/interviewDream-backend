@@ -21,6 +21,7 @@ const courseSchema = new Schema({
   tags: [String],
   categories: [String],
   rating: Number,
+  author: String,
 });
 
 module.exports = mongoose.model('Course', courseSchema);

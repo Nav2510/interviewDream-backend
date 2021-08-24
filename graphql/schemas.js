@@ -24,6 +24,10 @@ module.exports = gql`
     BACKEND
     LANGUAGE
     WEB
+    HTML
+    GRQPHQL
+    JAVASCRIPT
+    SORT
   }
 
   # =======================Input====================
@@ -135,6 +139,7 @@ module.exports = gql`
     rating: Int
     tags: [CourseTagEnum!]
     title: String!
+    author: String!
   }
 
   interface IPaper {
@@ -192,6 +197,7 @@ module.exports = gql`
     rating: Int
     tags: [CourseTagEnum!]
     title: String!
+    author: String!
   }
 
   type Courses {
@@ -203,6 +209,7 @@ module.exports = gql`
     rating: Int
     tags: [String!]
     title: String!
+    author: String!
   }
 
   type CourseData {
@@ -341,6 +348,7 @@ module.exports = gql`
     me: User!
     paper(id: ID!): Paper!
     papers: PaperData!
+    getPapersByCourseId(courseId: ID!): PaperData!
     profile: Profile!
     question(id: ID!): Question!
     questions: QuestionData!

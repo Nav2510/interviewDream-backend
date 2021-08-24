@@ -25,3 +25,11 @@ Database can be connected by setting up mongodb locally or using [Mongodb cloud]
 ## Runnning dev server
 
 Development server can be run using `start:dev` command in cli. Please make sure you have setup nodemon.json file locally.
+
+## Deployment
+
+InterviewDream backend is automatically deployed from Heroku platform when a PR is created to master branch. Project gets deployed to `https://interviewdream-backend.herokuapp.com/`
+
+## TODO
+
+1. Mapped object id need to be deleted on deleting questions, papers, courses.
