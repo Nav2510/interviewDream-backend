@@ -9,6 +9,12 @@ module.exports = gql`
     SINGLE_CORRECT
   }
 
+  enum GenderEnum {
+    MALE
+    FEMALE
+    OTHER
+  }
+
   enum CourseTagEnum {
     BEST_SELLER
     TOP_RATED
@@ -33,13 +39,16 @@ module.exports = gql`
   # =======================Input====================
   input BasicInfoInputData {
     fullName: String
+    email: String
+    username: String
+    gender: GenderEnum
   }
 
   input ContactInfoInputData {
     mobNo: String
-    skypeId: String
-    facebookId: String
-    gmailId: String
+    facebook: String
+    gmail: String
+    github: String
     website: String
   }
 
@@ -59,6 +68,7 @@ module.exports = gql`
     school: String
     college: String
     workplace: String
+    workMail: String
   }
 
   input LoginInputData {
@@ -175,14 +185,16 @@ module.exports = gql`
 
   type BasicInfo {
     fullName: String!
+    email: String!
+    username: String!
+    gender: GenderEnum!
   }
 
   type ContactInfo {
-    email: String
-    facebookId: String
-    gmailId: String
+    facebook: String
+    gmail: String
+    github: String
     mobNo: String
-    skypeId: String
     website: String
   }
 
@@ -221,6 +233,7 @@ module.exports = gql`
     college: String
     school: String
     workplace: String
+    workMail: String
   }
 
   type NormalResponse {
@@ -266,7 +279,7 @@ module.exports = gql`
   type PersonalInfo {
     country: String!
     dob: String!
-    gender: String!
+    address: String!
   }
 
   type Question {
@@ -372,6 +385,6 @@ module.exports = gql`
     selectQuestionsForTest(testId: ID!, questionIds: [ID]!): NormalResponse!
     selectPapersForCourse(courseId: ID!, paperIds: [ID]!): NormalResponse!
     updateQuestion(id: ID!, questionInput: QuestionInputData!): Question!
-    updateUserProfile(userInput: UserInputData!): User!
+    updateUserProfile(userInput: UserInputData!): Profile!
   }
 `;

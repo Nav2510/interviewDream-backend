@@ -7,10 +7,22 @@ const basicInfoSchema = new Schema({
     type: String,
     required: true,
   },
+  email: {
+    type: String,
+    required: true,
+  },
+  username: {
+    type: String,
+    required: true,
+  },
+  gender: {
+    type: String,
+    required: true,
+  },
 });
 
 const personalInfoSchema = new Schema({
-  gender: {
+  address: {
     type: String,
     required: true,
   },
@@ -28,15 +40,15 @@ const educationInfoSchema = new Schema({
   school: String,
   college: String,
   workplace: String,
+  workMail: String,
 });
 
 const contactInfoSchema = new Schema({
   mobNo: String,
-  skypeId: String,
-  facebookId: String,
-  gmailId: String,
+  facebook: String,
+  gmail: String,
   website: String,
-  email: String,
+  github: String,
 });
 
 const userSchema = new Schema({
@@ -53,11 +65,11 @@ const userSchema = new Schema({
     required: true,
   },
   publicProfileUrl: String,
-  bgImage: {
+  bgImagePath: {
     type: String,
     default: 'defaultbgImage.jpg',
   },
-  profileImage: {
+  profileImagePath: {
     type: String,
     default: 'defaultProfileImage.jpg',
   },

@@ -103,20 +103,7 @@ exports.updateUserProfile = async function (parent, args, context, info) {
   const updatedUser = await user.save();
   // TODO: Try using below code
   //  return { ...createdUser._doc, _id: createdUser._id.toString() };
-  return {
-    ...updatedUser,
-    bgImage: updatedUser.bgImage,
-    profileImage: updatedUser.profileImage,
-    basicInfo: updatedUser.basicInfo,
-    contactInfo: updatedUser.contactInfo,
-    educationInfo: updatedUser.educationInfo,
-    personalInfo: {
-      ...updatedUser.personalInfo,
-      country: updatedUser.personalInfo.country,
-      gender: updatedUser.personalInfo.gender,
-      dob: updatedUser.personalInfo.dob.toString(),
-    },
-  };
+  return updatedUser;
 };
 
 function createToken(user) {
