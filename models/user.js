@@ -45,10 +45,11 @@ const educationInfoSchema = new Schema({
 
 const contactInfoSchema = new Schema({
   mobNo: String,
-  facebook: String,
+  instagram: String,
   gmail: String,
   website: String,
   github: String,
+  linkedin: String,
 });
 
 const userSchema = new Schema({
@@ -60,6 +61,8 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  currentLocation: String,
+  designation: String,
   password: {
     type: String,
     required: true,
@@ -85,6 +88,7 @@ const userSchema = new Schema({
       },
     },
   ],
+  summary: String,
   basicInfo: basicInfoSchema,
   personalInfo: personalInfoSchema,
   educationInfo: educationInfoSchema,
