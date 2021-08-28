@@ -46,10 +46,11 @@ module.exports = gql`
 
   input ContactInfoInputData {
     mobNo: String
-    facebook: String
+    instagram: String
     gmail: String
     github: String
     website: String
+    linkeding: String
   }
 
   input CourseInputData {
@@ -132,7 +133,10 @@ module.exports = gql`
   input UserInputData {
     email: String
     username: String
+    currentLocation: String
+    designation: String
     password: String
+    summary: String
     basicInfo: BasicInfoInputData
     contactInfo: ContactInfoInputData
     educationInfo: EducationInfoInputData
@@ -191,11 +195,12 @@ module.exports = gql`
   }
 
   type ContactInfo {
-    facebook: String
+    instagram: String
     gmail: String
     github: String
     mobNo: String
     website: String
+    linkedin: String
   }
 
   type Course implements ICourse {
@@ -344,6 +349,8 @@ module.exports = gql`
     _id: ID!
     email: String!
     username: String!
+    designation: String
+    currentLocation: String
     basicInfo: BasicInfo
     bgImagePath: String!
     contactInfo: ContactInfo
@@ -352,6 +359,7 @@ module.exports = gql`
     personalInfo: PersonalInfo
     profileImagePath: String!
     publicProfileUrl: String
+    summary: String
   }
 
   # ====================Root Query=============

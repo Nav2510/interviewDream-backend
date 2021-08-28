@@ -85,6 +85,9 @@ exports.updateUserProfile = async function (parent, args, context, info) {
   if (!user) {
     addError(errorMsg.userNotFound, 'User not found', 404);
   }
+  if (args.userInput.summary) {
+    user['summary'] = args.userInput.summary;
+  }
   if (args.userInput.basicInfo) {
     user['basicInfo'] = args.userInput.basicInfo;
   }
