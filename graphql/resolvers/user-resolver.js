@@ -11,6 +11,7 @@ const {
   TOKEN_EXPIRES_TIME_NUMBER,
 } = require('../../util/contants/global');
 const { authGuard } = require('../../util/auth-guard');
+const ioUtil = require('../../socket');
 
 exports.getCurrentUser = async function (parent, args, context, info) {
   authGuard(context);
@@ -24,6 +25,14 @@ exports.getCurrentUser = async function (parent, args, context, info) {
     email: user.email,
     username: user.username,
   };
+};
+
+exports.getOnlineUsers = async function (parent, args, context, info) {
+  authGuard(context);
+
+  const users = ioUtil.getOnlineUsers();
+
+  return users;
 };
 
 exports.getProfile = async function (parent, args, context, info) {
@@ -78,10 +87,145 @@ exports.register = async function (parent, args, context, info) {
   };
 };
 
+exports.fetchUserByNameOrUsername = async function (
+  parent,
+  args,
+  context,
+  info
+) {
+  authGuard(context);
+  const fullName = args.name;
+  const fullNameRegex = new RegExp(`^${fullName}[a-z ]+`, 'gi');
+  const users = await User.find({
+    'basicInfo.fullName': { $regex: fullNameRegex },
+  });
+  if (!users) {
+    addError(errorMsg.userNotFound, 'User not found', 404);
+  }
+  const returnValue = [];
+  users.forEach((user) => {
+    returnValue.push({
+      _id: user._id,
+      email: user.email,
+      username: user.username,
+      fullName: user.basicInfo?.fullName,
+    });
+  });
+  return returnValue;
+};
+
+exports.fetchContactRequests = async function (parent, args, context, info) {
+  authGuard(context);
+  const currentUserId = context.user.userId;
+  const currentUser = await User.findById(currentUserId).populate(
+    'contactRequests'
+  );
+  const currentUserRequestList = [...currentUser.contactRequests];
+  const requestList = [];
+  currentUserRequestList.forEach((user) => {
+    requestList.push({
+      _id: user._id,
+      email: user.email,
+      username: user.username,
+      fullName: user.basicInfo?.fullName,
+    });
+  });
+  return requestList;
+};
+exports.fetchAddedContacts = async function (parent, args, context, info) {
+  authGuard(context);
+  const currentUserId = context.user.userId;
+  const currentUser = await User.findById(currentUserId).populate('contacts');
+  const currenctUserContactList = [...currentUser.contacts];
+  const contacts = [];
+  currenctUserContactList.forEach((user) => {
+    contacts.push({
+      _id: user._id,
+      email: user.email,
+      username: user.username,
+      fullName: user.basicInfo?.fullName,
+    });
+  });
+  return contacts;
+};
+
+exports.requestContact = async function (parent, args, context, info) {
+  authGuard(context);
+  const requestContactId = args.id;
+  const currentUserId = context.user.userId;
+  if (requestContactId === currentUserId) {
+    addError(
+      errorMsg.unknownError,
+      'Requested user cannot be logged in user',
+      500
+    );
+  }
+  const requestContactUser = await User.findById(requestContactId);
+  if (!requestContactUser) {
+    addError(errorMsg.userNotFound, 'Contact not found', 404);
+  }
+  const requestContacts = [...requestContactUser.contactRequests];
+  const contactAlreadyPresent = requestContacts.find(
+    (id) => id.toString() === currentUserId.toString()
+  );
+  if (contactAlreadyPresent) {
+    addError(errorMsg.userExist, 'Already requested', 500);
+  }
+  requestContacts.push(currentUserId);
+  requestContactUser.contactRequests = requestContacts;
+  await requestContactUser.save();
+  return {
+    status: 'OK',
+    code: 200,
+    msg: 'Requested',
+  };
+};
+
+exports.reponseRequest = async function (parent, args, context, info) {
+  authGuard(context);
+  const requestedContactId = args.id;
+  const response = args.response;
+
+  const currentUserId = context.user.userId;
+  let currentUser = await User.findById(currentUserId);
+  let currenctUserRequestList = [...currentUser.contactRequests];
+  currenctUserRequestList = currenctUserRequestList.filter((requestId) => {
+    return requestId.toString() !== requestedContactId.toString();
+  });
+  currentUser.contactRequests = currenctUserRequestList;
+
+  if (!response) {
+    await currentUser.save();
+    return {
+      status: 'OK',
+      code: 200,
+      msg: 'Request rejected.',
+    };
+  }
+  let requestedContactUser = await User.findById(requestedContactId);
+  if (!requestedContactUser) {
+    addError(errorMsg.userNotFound, 'Contact not found', 404);
+  }
+  const requestedUserContactList = [...requestedContactUser.contacts];
+  requestedUserContactList.push(currentUserId);
+  requestedContactUser.contacts = requestedUserContactList;
+  const currentUserContactList = [...currentUser.contacts];
+  currentUserContactList.push(requestedContactId);
+  currentUser.contacts = currentUserContactList;
+  await requestedContactUser.save();
+  await currentUser.save();
+
+  return {
+    status: 'OK',
+    code: 200,
+    msg: 'Approved',
+  };
+};
+
 exports.updateUserProfile = async function (parent, args, context, info) {
   authGuard(context);
-  // TODO: Find user by logged in id instead of hardcoded
-  const user = await User.findById('60a932ba131fcc35685d4833');
+  const userId = context.user.userId;
+  const user = await User.findById(userId);
   if (!user) {
     addError(errorMsg.userNotFound, 'User not found', 404);
   }

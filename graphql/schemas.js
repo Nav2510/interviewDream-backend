@@ -247,6 +247,11 @@ module.exports = gql`
     msg: String!
   }
 
+  type OnlineUser {
+    socketId: String!
+    userId: String!
+  }
+
   type Option {
     isAnswer: Boolean!
     label: String!
@@ -343,6 +348,7 @@ module.exports = gql`
     _id: ID!
     email: String!
     username: String!
+    fullName: String
   }
 
   type Profile {
@@ -370,6 +376,10 @@ module.exports = gql`
     paper(id: ID!): Paper!
     papers: PaperData!
     getPapersByCourseId(courseId: ID!): PaperData!
+    getOnlineUsers: [OnlineUser]!
+    fetchUserByNameOrUsername(name: String): [User]!
+    fetchContactRequests: [User]!
+    fetchAddedContacts: [User]!
     profile: Profile!
     question(id: ID!): Question!
     questions: QuestionData!
@@ -379,6 +389,8 @@ module.exports = gql`
 
   # ====================Root Mutation==========
   type Mutation {
+    requestContact(id: ID!): NormalResponse!
+    reponseRequest(id: ID!, response: Boolean): NormalResponse!
     createCourse(courseInput: CourseInputData!): Course!
     createPaper(paperInput: PaperInputData!): Paper!
     createQuestion(questionInput: QuestionInputData!): Question!

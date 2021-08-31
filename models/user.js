@@ -5,26 +5,21 @@ const Schema = mongoose.Schema;
 const basicInfoSchema = new Schema({
   fullName: {
     type: String,
-    required: true,
   },
   email: {
     type: String,
-    required: true,
   },
   username: {
     type: String,
-    required: true,
   },
   gender: {
     type: String,
-    required: true,
   },
 });
 
 const personalInfoSchema = new Schema({
   address: {
     type: String,
-    required: true,
   },
   country: {
     type: String,
@@ -32,7 +27,6 @@ const personalInfoSchema = new Schema({
   },
   dob: {
     type: Date,
-    required: true,
   },
 });
 
@@ -89,6 +83,8 @@ const userSchema = new Schema({
     },
   ],
   summary: String,
+  contactRequests: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   basicInfo: basicInfoSchema,
   personalInfo: personalInfoSchema,
   educationInfo: educationInfoSchema,

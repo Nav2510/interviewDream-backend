@@ -11,7 +11,9 @@ const { v4: uuidv4 } = require('uuid');
 
 const typeDefs = require('./graphql/schemas');
 const resolvers = require('./graphql/resolvers');
-const { authorizeUser } = require('./middleware/auth');
+const { auth } = require('./middleware/auth');
+const messagesRoutes = require('./routes/messages');
+const ioUtil = require('./socket');
 
 const port = process.env.PORT || 3001;
 
@@ -39,12 +41,12 @@ const fileFilter = (req, file, cb) => {
 };
 
 const context = ({ req }) => {
-  const user = authorizeUser(req);
+  const user = auth.authorizeUser(req);
   return { user };
 };
 
 // TODO: Remove playground and introspection once complete integration with Client is done
-const server = new ApolloServer({
+const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
   context,
@@ -75,7 +77,6 @@ app.use(bodyParser.json()); //application/json
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
 );
-app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // TODO: Move is to middleware folder
 // Allows various CORS headers, methods
@@ -88,6 +89,12 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
+
+// Route for handling images
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
+// Route for handling sockets stream
+app.use('/messages', messagesRoutes);
 
 // TODO: Setup authentication
 app.put('post-image', (req, res, next) => {
@@ -108,7 +115,7 @@ app.get('/', (req, res, next) => {
   res.redirect('/graphql');
 });
 
-server.applyMiddleware({ app });
+apolloServer.applyMiddleware({ app });
 
 mongoose
   .connect(process.env.MONGO_ATLAS_URI, {
@@ -118,15 +125,18 @@ mongoose
   .then(() => {
     console.log('Mongo atlas connected!!');
 
-    app.listen({ port: port }, () =>
+    const server = app.listen({ port: port }, () =>
       console.log(
-        `🚀 Server ready at http://localhost:${port}${server.graphqlPath}`
+        `🚀 Server ready at http://localhost:${port}${apolloServer.graphqlPath}`
       )
     );
+    const io = ioUtil.init(server);
+    io.on('connection', ioUtil.handleConnection);
+    io.on('connection', ioUtil.emitOnlineUsers);
   })
   .catch((error) => {
     console.error(`Mongodb connection failed with error: ${error}`);
-    cosnole.error(
+    console.error(
       `Tips: Check for the network access in case of mongo connection failure`
     );
   });
