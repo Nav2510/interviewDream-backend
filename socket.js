@@ -9,7 +9,7 @@ module.exports = {
         origin: [
           'http://localhost:5000',
           'https://interviewdreamv2.web.app',
-          'https://interviewdreamv2.firebaseapp.com/',
+          'https://interviewdreamv2.firebaseapp.com',
         ],
         methods: ['GET', 'POST'],
       },
