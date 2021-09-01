@@ -132,7 +132,10 @@ mongoose
     );
     const io = ioUtil.init(server);
     io.on('connection', ioUtil.handleConnection);
-    io.on('connection', ioUtil.emitOnlineUsers);
+    io.on('connection', ioUtil.handleDisconnection);
+    io.on('connection', ioUtil.emitExistingUsersToClient);
+    io.on('connection', ioUtil.notifyExistingUsers);
+    io.on('connection', ioUtil.handleMessage);
   })
   .catch((error) => {
     console.error(`Mongodb connection failed with error: ${error}`);

@@ -1,7 +1,6 @@
 const { auth } = require('./middleware/auth');
 
 let io;
-let onlineUsers = [];
 
 module.exports = {
   init: (httpServer) => {
@@ -12,9 +11,6 @@ module.exports = {
       },
     });
     return io;
-  },
-  getOnlineUsers: () => {
-    return onlineUsers;
   },
   getIO: () => {
     if (!io) {
@@ -40,13 +36,38 @@ module.exports = {
     }
     socket.userId = parsedToken.userId;
   },
-  emitOnlineUsers: (socket) => {
+  handleDisconnection: (socket) => {
+    socket.on('disconnect', (reason) => {
+      socket.broadcast.emit('user disconnected', {
+        socketId: socket.id,
+        userId: socket.userId,
+      });
+    });
+  },
+  handleMessage: (socket) => {
+    socket.on('private message', ({ msgContent, toSocketId }) => {
+      socket.to(toSocketId).emit('private message', {
+        msgContent,
+        timestamp: new Date(),
+        fromSocket: socket.id,
+      });
+    });
+  },
+  emitExistingUsersToClient: (socket) => {
+    const onlineUsers = [];
     for (let [id, socket] of io.of('/').sockets) {
       onlineUsers.push({
         socketId: id,
         userId: socket.userId,
       });
     }
-    socket.broadcast.emit('user connected', onlineUsers);
+    socket.emit('users', onlineUsers);
+  },
+  notifyExistingUsers: (socket) => {
+    // notify existing users
+    socket.broadcast.emit('user connected', {
+      socketId: socket.id,
+      userId: socket.userId,
+    });
   },
 };

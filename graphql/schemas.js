@@ -247,11 +247,6 @@ module.exports = gql`
     msg: String!
   }
 
-  type OnlineUser {
-    socketId: String!
-    userId: String!
-  }
-
   type Option {
     isAnswer: Boolean!
     label: String!
@@ -376,7 +371,6 @@ module.exports = gql`
     paper(id: ID!): Paper!
     papers: PaperData!
     getPapersByCourseId(courseId: ID!): PaperData!
-    getOnlineUsers: [OnlineUser]!
     fetchUserByNameOrUsername(name: String): [User]!
     fetchContactRequests: [User]!
     fetchAddedContacts: [User]!

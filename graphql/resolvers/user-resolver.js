@@ -27,14 +27,6 @@ exports.getCurrentUser = async function (parent, args, context, info) {
   };
 };
 
-exports.getOnlineUsers = async function (parent, args, context, info) {
-  authGuard(context);
-
-  const users = ioUtil.getOnlineUsers();
-
-  return users;
-};
-
 exports.getProfile = async function (parent, args, context, info) {
   authGuard(context);
   const userId = context.user.userId;
