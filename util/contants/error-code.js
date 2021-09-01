@@ -10,6 +10,7 @@ const errorCode = {
   qstnNotExist: 'QSTN_NOT_EXIST',
   courseNotExist: 'COURSE_NOT_EXIST',
   notAuth: 'NOT_AUTH',
+  unknownError: 'UNKNWN_ERROR',
 };
 
 module.exports = errorCode;

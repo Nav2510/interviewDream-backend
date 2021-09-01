@@ -1,7 +1,7 @@
 const bcryptSalt = 12;
 const applicationSecret = 'Interv!ewDre@m APppl!cat!on SeCrEt';
-const jwtTokenExpiresTime = '1h';
-const jwtTokenExpiresInNumber = 3600;
+const jwtTokenExpiresTime = '10h';
+const jwtTokenExpiresInNumber = 36000;
 
 exports.BCRYPT_SALT = bcryptSalt;
 exports.APPLICATION_SECRET = applicationSecret;
