@@ -6,7 +6,11 @@ module.exports = {
   init: (httpServer) => {
     io = require('socket.io')(httpServer, {
       cors: {
-        origin: ['http://localhost:5000'],
+        origin: [
+          'http://localhost:5000',
+          'https://interviewdreamv2.web.app',
+          'https://interviewdreamv2.firebaseapp.com/',
+        ],
         methods: ['GET', 'POST'],
       },
     });
