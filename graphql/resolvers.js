@@ -24,21 +24,22 @@ const {
   fetchAddedContacts,
   reponseRequest,
   requestContact,
-} = require('./resolvers/user-resolver');
+  setRole,
+} = require("./resolvers/user-resolver");
 const {
   getTest,
   getTests,
   createTest,
   deleteTest,
   selectQuestionsForTest,
-} = require('./resolvers/test-resolver');
+} = require("./resolvers/test-resolver");
 const {
   getCourse,
   getCourses,
   createCourse,
   selectQuestionsForCourse,
   selectPapersForCourse,
-} = require('./resolvers/course-resolver');
+} = require("./resolvers/course-resolver");
 
 // Provide resolver functions for your schema fields
 module.exports = {
@@ -63,6 +64,7 @@ module.exports = {
     selectQuestionsForPaper: selectQuestionsForPaper,
     selectQuestionsForTest: selectQuestionsForTest,
     selectPapersForCourse: selectPapersForCourse,
+    setRole: setRole,
     createCourse: createCourse,
     createPaper: createPaper,
     createQuestion: createQuestion,

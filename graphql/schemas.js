@@ -36,6 +36,10 @@ module.exports = gql`
     SORT
   }
 
+  enum RoleEnum {
+    INSTRUCTOR
+    STUDENT
+  }
   # =======================Input====================
   input BasicInfoInputData {
     fullName: String
@@ -345,6 +349,7 @@ module.exports = gql`
     email: String!
     username: String!
     fullName: String
+    role: RoleEnum!
   }
 
   type Profile {
@@ -399,6 +404,7 @@ module.exports = gql`
     selectQuestionsForPaper(paperId: ID!, questionIds: [ID]!): NormalResponse!
     selectQuestionsForTest(testId: ID!, questionIds: [ID]!): NormalResponse!
     selectPapersForCourse(courseId: ID!, paperIds: [ID]!): NormalResponse!
+    setRole(role: RoleEnum!): NormalResponse!
     updateQuestion(id: ID!, questionInput: QuestionInputData!): Question!
     updateUserProfile(userInput: UserInputData!): Profile!
   }

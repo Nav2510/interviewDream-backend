@@ -18,12 +18,14 @@ exports.getCurrentUser = async function (parent, args, context, info) {
   const userId = context.user.userId;
   const user = await User.findById(userId);
   if (!user) {
-    addError(errorMsg.userNotFound, 'User not found', 404);
+    addError(errorMsg.userNotFound, "User not found", 404);
   }
   return {
     _id: user._id.toString(),
     email: user.email,
     username: user.username,
+    fullName: user.basicInfo?.fullName,
+    role: user.role,
   };
 };
 
@@ -32,9 +34,29 @@ exports.getProfile = async function (parent, args, context, info) {
   const userId = context.user.userId;
   const user = await User.findById(userId);
   if (!user) {
-    addError(errorMsg.userNotFound, 'User not found', 404);
+    addError(errorMsg.userNotFound, "User not found", 404);
   }
   return user;
+};
+
+exports.setRole = async function (parent, args, context, info) {
+  authGuard(context);
+  const role = args.role;
+  const userId = context.user.userId;
+  const user = await User.findById(userId);
+  if (!user) {
+    addError(errorMsg.userNotFound, "User not found", 404);
+  }
+  if (user.role) {
+    addError(errorMsg.roleExist, "Role already added", 500);
+  }
+  user.role = role;
+  await user.save();
+  return {
+    status: "OK",
+    code: 200,
+    msg: "Role added",
+  };
 };
 
 exports.login = async function (parent, args, context, info) {

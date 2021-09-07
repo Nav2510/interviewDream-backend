@@ -55,6 +55,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  role: String,
   currentLocation: String,
   designation: String,
   password: {
@@ -64,11 +65,11 @@ const userSchema = new Schema({
   publicProfileUrl: String,
   bgImagePath: {
     type: String,
-    default: 'defaultbgImage.jpg',
+    default: "defaultbgImage.jpg",
   },
   profileImagePath: {
     type: String,
-    default: 'defaultProfileImage.jpg',
+    default: "defaultProfileImage.jpg",
   },
   interviewDreamScore: [
     {
@@ -83,8 +84,8 @@ const userSchema = new Schema({
     },
   ],
   summary: String,
-  contactRequests: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  contactRequests: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  contacts: [{ type: Schema.Types.ObjectId, ref: "User" }],
   basicInfo: basicInfoSchema,
   personalInfo: personalInfoSchema,
   educationInfo: educationInfoSchema,
