@@ -116,6 +116,7 @@ module.exports = gql`
     email: String!
     password: String!
     username: String!
+    fullName: String!
   }
 
   input TestInputData {

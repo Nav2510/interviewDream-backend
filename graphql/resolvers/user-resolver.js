@@ -60,15 +60,19 @@ exports.register = async function (parent, args, context, info) {
   const username = args.registerInput.username;
   const password = args.registerInput.password;
   const email = args.registerInput.email;
+  const fullName = args.registerInput.fullName;
   const existingUser = await User.findOne({ email: email });
   if (existingUser) {
-    addError(errorMsg.userExist, 'User already exists.');
+    addError(errorMsg.userExist, "User already exists.");
   }
   const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT);
   const user = new User({
     username,
     password: hashedPassword,
     email,
+    basicInfo: {
+      fullName,
+    },
   });
   const createdUser = await user.save();
   const token = createToken(user);
@@ -87,12 +91,12 @@ exports.fetchUserByNameOrUsername = async function (
 ) {
   authGuard(context);
   const fullName = args.name;
-  const fullNameRegex = new RegExp(`^${fullName}[a-z ]+`, 'gi');
+  const fullNameRegex = new RegExp(`^${fullName}[a-z ]+`, "gi");
   const users = await User.find({
-    'basicInfo.fullName': { $regex: fullNameRegex },
+    "basicInfo.fullName": { $regex: fullNameRegex },
   });
   if (!users) {
-    addError(errorMsg.userNotFound, 'User not found', 404);
+    addError(errorMsg.userNotFound, "User not found", 404);
   }
   const returnValue = [];
   users.forEach((user) => {
@@ -110,7 +114,7 @@ exports.fetchContactRequests = async function (parent, args, context, info) {
   authGuard(context);
   const currentUserId = context.user.userId;
   const currentUser = await User.findById(currentUserId).populate(
-    'contactRequests'
+    "contactRequests"
   );
   const currentUserRequestList = [...currentUser.contactRequests];
   const requestList = [];
@@ -127,7 +131,7 @@ exports.fetchContactRequests = async function (parent, args, context, info) {
 exports.fetchAddedContacts = async function (parent, args, context, info) {
   authGuard(context);
   const currentUserId = context.user.userId;
-  const currentUser = await User.findById(currentUserId).populate('contacts');
+  const currentUser = await User.findById(currentUserId).populate("contacts");
   const currenctUserContactList = [...currentUser.contacts];
   const contacts = [];
   currenctUserContactList.forEach((user) => {
@@ -148,28 +152,35 @@ exports.requestContact = async function (parent, args, context, info) {
   if (requestContactId === currentUserId) {
     addError(
       errorMsg.unknownError,
-      'Requested user cannot be logged in user',
+      "Requested user cannot be logged in user",
       500
     );
   }
   const requestContactUser = await User.findById(requestContactId);
   if (!requestContactUser) {
-    addError(errorMsg.userNotFound, 'Contact not found', 404);
+    addError(errorMsg.userNotFound, "Contact not found", 404);
   }
   const requestContacts = [...requestContactUser.contactRequests];
-  const contactAlreadyPresent = requestContacts.find(
+  const requestAlreadyPresent = requestContacts.find(
+    (id) => id.toString() === currentUserId.toString()
+  );
+  const contactList = [...requestContactUser.contacts];
+  const contactAlreadyPresent = contactList.find(
     (id) => id.toString() === currentUserId.toString()
   );
   if (contactAlreadyPresent) {
-    addError(errorMsg.userExist, 'Already requested', 500);
+    addError(errorMsg.userExist, "Already added to contacts", 500);
+  }
+  if (requestAlreadyPresent) {
+    addError(errorMsg.userExist, "Already requested", 500);
   }
   requestContacts.push(currentUserId);
   requestContactUser.contactRequests = requestContacts;
   await requestContactUser.save();
   return {
-    status: 'OK',
+    status: "OK",
     code: 200,
-    msg: 'Requested',
+    msg: "Requested",
   };
 };
 
@@ -189,28 +200,34 @@ exports.reponseRequest = async function (parent, args, context, info) {
   if (!response) {
     await currentUser.save();
     return {
-      status: 'OK',
+      status: "OK",
       code: 200,
-      msg: 'Request rejected.',
+      msg: "Request rejected.",
     };
   }
   let requestedContactUser = await User.findById(requestedContactId);
   if (!requestedContactUser) {
-    addError(errorMsg.userNotFound, 'Contact not found', 404);
+    addError(errorMsg.userNotFound, "Contact not found", 404);
   }
   const requestedUserContactList = [...requestedContactUser.contacts];
   requestedUserContactList.push(currentUserId);
   requestedContactUser.contacts = requestedUserContactList;
   const currentUserContactList = [...currentUser.contacts];
+  const contactAlreadyPresent = currentUserContactList.find(
+    (id) => id.toString() === requestedContactId.toString()
+  );
+  if (contactAlreadyPresent) {
+    addError(errorMsg.userExist, "Already added to contacts", 500);
+  }
   currentUserContactList.push(requestedContactId);
   currentUser.contacts = currentUserContactList;
   await requestedContactUser.save();
   await currentUser.save();
 
   return {
-    status: 'OK',
+    status: "OK",
     code: 200,
-    msg: 'Approved',
+    msg: "Approved",
   };
 };
 
