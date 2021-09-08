@@ -69,7 +69,7 @@ const userSchema = new Schema({
   },
   profileImagePath: {
     type: String,
-    default: "defaultProfileImage.jpg",
+    default: "",
   },
   interviewDreamScore: [
     {

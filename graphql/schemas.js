@@ -348,7 +348,8 @@ module.exports = gql`
     _id: ID!
     email: String!
     username: String!
-    fullName: String
+    fullName: String!
+    profileImagePath: String
     role: RoleEnum!
   }
 

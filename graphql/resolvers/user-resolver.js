@@ -10,8 +10,7 @@ const {
   TOKEN_EXPIRES_TIME,
   TOKEN_EXPIRES_TIME_NUMBER,
 } = require('../../util/contants/global');
-const { authGuard } = require('../../util/auth-guard');
-const ioUtil = require('../../socket');
+const { authGuard } = require("../../util/auth-guard");
 
 exports.getCurrentUser = async function (parent, args, context, info) {
   authGuard(context);
@@ -25,6 +24,7 @@ exports.getCurrentUser = async function (parent, args, context, info) {
     email: user.email,
     username: user.username,
     fullName: user.basicInfo?.fullName,
+    profileImagePath: user.profileImagePath,
     role: user.role,
   };
 };
@@ -64,11 +64,11 @@ exports.login = async function (parent, args, context, info) {
   const password = args.loginInput.password;
   const user = await User.findOne({ email });
   if (!user) {
-    addError(errorMsg.userNotFound, 'User does not exists.', 404);
+    addError(errorMsg.userNotFound, "User does not exists.", 404);
   }
   const isEqual = await bcrypt.compare(password, user.password);
   if (!isEqual) {
-    addError(errorMsg.passwordIncorrect, 'Enter password is incorrect.', 401);
+    addError(errorMsg.passwordIncorrect, "Enter password is incorrect.", 401);
   }
   const token = createToken(user);
   return {
@@ -127,6 +127,7 @@ exports.fetchUserByNameOrUsername = async function (
       email: user.email,
       username: user.username,
       fullName: user.basicInfo?.fullName,
+      role: user.role,
     });
   });
   return returnValue;
@@ -146,6 +147,7 @@ exports.fetchContactRequests = async function (parent, args, context, info) {
       email: user.email,
       username: user.username,
       fullName: user.basicInfo?.fullName,
+      role: user.role,
     });
   });
   return requestList;
@@ -162,6 +164,8 @@ exports.fetchAddedContacts = async function (parent, args, context, info) {
       email: user.email,
       username: user.username,
       fullName: user.basicInfo?.fullName,
+      role: user.role,
+      profileImagePath: user.profileImagePath,
     });
   });
   return contacts;
