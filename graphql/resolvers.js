@@ -5,34 +5,42 @@ const {
   deleteQuestion,
   updateQuestion,
 } = require('./resolvers/question-resolver');
+const { getUserMessages } = require("./resolvers/message-resolver");
 const {
   getPaper,
   getPapers,
   deletePaper,
   createPaper,
+  getPapersByCourseId,
   selectQuestionsForPaper,
-} = require('./resolvers/paper-resolver');
+} = require("./resolvers/paper-resolver");
 const {
   getCurrentUser,
   getProfile,
   login,
   register,
   updateUserProfile,
-} = require('./resolvers/user-resolver');
+  fetchUserByNameOrUsername,
+  fetchContactRequests,
+  fetchAddedContacts,
+  reponseRequest,
+  requestContact,
+  setRole,
+} = require("./resolvers/user-resolver");
 const {
   getTest,
   getTests,
   createTest,
   deleteTest,
   selectQuestionsForTest,
-} = require('./resolvers/test-resolver');
+} = require("./resolvers/test-resolver");
 const {
   getCourse,
   getCourses,
   createCourse,
   selectQuestionsForCourse,
   selectPapersForCourse,
-} = require('./resolvers/course-resolver');
+} = require("./resolvers/course-resolver");
 
 // Provide resolver functions for your schema fields
 module.exports = {
@@ -44,6 +52,11 @@ module.exports = {
     questions: getQuestions,
     paper: getPaper,
     papers: getPapers,
+    getPapersByCourseId: getPapersByCourseId,
+    getUserMessages: getUserMessages,
+    fetchUserByNameOrUsername: fetchUserByNameOrUsername,
+    fetchContactRequests: fetchContactRequests,
+    fetchAddedContacts: fetchAddedContacts,
     test: getTest,
     tests: getTests,
     profile: getProfile,
@@ -53,12 +66,15 @@ module.exports = {
     selectQuestionsForPaper: selectQuestionsForPaper,
     selectQuestionsForTest: selectQuestionsForTest,
     selectPapersForCourse: selectPapersForCourse,
+    setRole: setRole,
     createCourse: createCourse,
     createPaper: createPaper,
     createQuestion: createQuestion,
     updateQuestion: updateQuestion,
     createTest: createTest,
     register: register,
+    requestContact: requestContact,
+    reponseRequest: reponseRequest,
     login: login,
     deleteQuestion: deleteQuestion,
     deletePaper: deletePaper,

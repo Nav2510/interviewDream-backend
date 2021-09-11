@@ -15,11 +15,28 @@ exports.getPaper = async function (parent, args, context, info) {
 
 exports.getPapers = async function (parent, args, context, info) {
   authGuard(context);
-  const fetchedPaperCount = await Paper.find().countDocuments();
-  const fetchedPaper = await Paper.find();
+  const fetchedPapersCount = await Paper.find().countDocuments();
+  const fetchedPapers = await Paper.find();
   return {
-    numberOfPapers: fetchedPaperCount,
-    papers: [...fetchedPaper],
+    numberOfPapers: fetchedPapersCount,
+    papers: [...fetchedPapers],
+  };
+};
+
+exports.getPapersByCourseId = async function (parent, args, context, info) {
+  authGuard(context);
+  const courseId = args.courseId;
+
+  const fetchedPapersCount = await Paper.find({
+    course: courseId,
+  }).countDocuments();
+  const fetchedPapers = await Paper.find({
+    course: courseId,
+  });
+
+  return {
+    numberOfPapers: fetchedPapersCount,
+    papers: [...fetchedPapers],
   };
 };
 
@@ -29,6 +46,7 @@ exports.createPaper = async function (parent, args, context, info) {
   const title = args.paperInput.title;
   const type = args.paperInput.type;
   const fetchedPaper = await Paper.findOne({ title, type });
+
   if (fetchedPaper) {
     addError(errorMsg.pprExist, 'Paper already exist. Please change title.');
   }
@@ -37,6 +55,7 @@ exports.createPaper = async function (parent, args, context, info) {
   });
 
   const createdPaper = await paper.save();
+
   return createdPaper;
 };
 

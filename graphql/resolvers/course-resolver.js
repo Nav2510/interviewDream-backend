@@ -87,17 +87,18 @@ exports.selectPapersForCourse = async function (parent, args, context, info) {
   if (!fetchedCourse) {
     addError(errorMsg.courseNotExist, 'Course does not exist.', 404);
   }
-  const fetchedPaperCount = await Paper.find({
+  const fetchedPapersCount = await Paper.find({
     _id: paperIds,
   }).countDocuments();
-  if (!fetchedPaperCount) {
+  if (!fetchedPapersCount) {
     addError(errorMsg.paperNotExist, 'No paper found.', 404);
   }
 
-  if (fetchedPaperCount < paperIds.length) {
+  if (fetchedPapersCount < paperIds.length) {
     addError(errorMsg.paperNotExist, 'Could not found some papers.', 404);
   }
   fetchedCourse.papers = paperIds;
+  await Paper.updateMany({ _id: paperIds }, { course: courseId });
   await fetchedCourse.save();
   return {
     status: 'OK',

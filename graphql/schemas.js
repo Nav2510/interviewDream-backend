@@ -9,6 +9,12 @@ module.exports = gql`
     SINGLE_CORRECT
   }
 
+  enum GenderEnum {
+    MALE
+    FEMALE
+    OTHER
+  }
+
   enum CourseTagEnum {
     BEST_SELLER
     TOP_RATED
@@ -24,19 +30,31 @@ module.exports = gql`
     BACKEND
     LANGUAGE
     WEB
+    HTML
+    GRQPHQL
+    JAVASCRIPT
+    SORT
   }
 
+  enum RoleEnum {
+    INSTRUCTOR
+    STUDENT
+  }
   # =======================Input====================
   input BasicInfoInputData {
     fullName: String
+    email: String
+    username: String
+    gender: GenderEnum
   }
 
   input ContactInfoInputData {
     mobNo: String
-    skypeId: String
-    facebookId: String
-    gmailId: String
+    instagram: String
+    gmail: String
+    github: String
     website: String
+    linkeding: String
   }
 
   input CourseInputData {
@@ -55,6 +73,7 @@ module.exports = gql`
     school: String
     college: String
     workplace: String
+    workMail: String
   }
 
   input LoginInputData {
@@ -101,6 +120,7 @@ module.exports = gql`
     email: String!
     password: String!
     username: String!
+    fullName: String!
   }
 
   input TestInputData {
@@ -118,7 +138,10 @@ module.exports = gql`
   input UserInputData {
     email: String
     username: String
+    currentLocation: String
+    designation: String
     password: String
+    summary: String
     basicInfo: BasicInfoInputData
     contactInfo: ContactInfoInputData
     educationInfo: EducationInfoInputData
@@ -135,6 +158,7 @@ module.exports = gql`
     rating: Int
     tags: [CourseTagEnum!]
     title: String!
+    author: String!
   }
 
   interface IPaper {
@@ -170,15 +194,18 @@ module.exports = gql`
 
   type BasicInfo {
     fullName: String!
+    email: String!
+    username: String!
+    gender: GenderEnum!
   }
 
   type ContactInfo {
-    email: String
-    facebookId: String
-    gmailId: String
+    instagram: String
+    gmail: String
+    github: String
     mobNo: String
-    skypeId: String
     website: String
+    linkedin: String
   }
 
   type Course implements ICourse {
@@ -192,6 +219,7 @@ module.exports = gql`
     rating: Int
     tags: [CourseTagEnum!]
     title: String!
+    author: String!
   }
 
   type Courses {
@@ -203,6 +231,7 @@ module.exports = gql`
     rating: Int
     tags: [String!]
     title: String!
+    author: String!
   }
 
   type CourseData {
@@ -214,6 +243,12 @@ module.exports = gql`
     college: String
     school: String
     workplace: String
+    workMail: String
+  }
+  type Message {
+    content: String!
+    timestamp: String!
+    owner: String!
   }
 
   type NormalResponse {
@@ -259,7 +294,7 @@ module.exports = gql`
   type PersonalInfo {
     country: String!
     dob: String!
-    gender: String!
+    address: String!
   }
 
   type Question {
@@ -318,12 +353,17 @@ module.exports = gql`
     _id: ID!
     email: String!
     username: String!
+    fullName: String!
+    profileImagePath: String
+    role: RoleEnum!
   }
 
   type Profile {
     _id: ID!
     email: String!
     username: String!
+    designation: String
+    currentLocation: String
     basicInfo: BasicInfo
     bgImagePath: String!
     contactInfo: ContactInfo
@@ -332,6 +372,7 @@ module.exports = gql`
     personalInfo: PersonalInfo
     profileImagePath: String!
     publicProfileUrl: String
+    summary: String
   }
 
   # ====================Root Query=============
@@ -341,6 +382,11 @@ module.exports = gql`
     me: User!
     paper(id: ID!): Paper!
     papers: PaperData!
+    getPapersByCourseId(courseId: ID!): PaperData!
+    getUserMessages(fromUserId: ID!): [Message]!
+    fetchUserByNameOrUsername(name: String): [User]!
+    fetchContactRequests: [User]!
+    fetchAddedContacts: [User]!
     profile: Profile!
     question(id: ID!): Question!
     questions: QuestionData!
@@ -350,6 +396,8 @@ module.exports = gql`
 
   # ====================Root Mutation==========
   type Mutation {
+    requestContact(id: ID!): NormalResponse!
+    reponseRequest(id: ID!, response: Boolean): NormalResponse!
     createCourse(courseInput: CourseInputData!): Course!
     createPaper(paperInput: PaperInputData!): Paper!
     createQuestion(questionInput: QuestionInputData!): Question!
@@ -363,7 +411,8 @@ module.exports = gql`
     selectQuestionsForPaper(paperId: ID!, questionIds: [ID]!): NormalResponse!
     selectQuestionsForTest(testId: ID!, questionIds: [ID]!): NormalResponse!
     selectPapersForCourse(courseId: ID!, paperIds: [ID]!): NormalResponse!
+    setRole(role: RoleEnum!): NormalResponse!
     updateQuestion(id: ID!, questionInput: QuestionInputData!): Question!
-    updateUserProfile(userInput: UserInputData!): User!
+    updateUserProfile(userInput: UserInputData!): Profile!
   }
 `;

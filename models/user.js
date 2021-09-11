@@ -5,14 +5,21 @@ const Schema = mongoose.Schema;
 const basicInfoSchema = new Schema({
   fullName: {
     type: String,
-    required: true,
+  },
+  email: {
+    type: String,
+  },
+  username: {
+    type: String,
+  },
+  gender: {
+    type: String,
   },
 });
 
 const personalInfoSchema = new Schema({
-  gender: {
+  address: {
     type: String,
-    required: true,
   },
   country: {
     type: String,
@@ -20,7 +27,6 @@ const personalInfoSchema = new Schema({
   },
   dob: {
     type: Date,
-    required: true,
   },
 });
 
@@ -28,15 +34,16 @@ const educationInfoSchema = new Schema({
   school: String,
   college: String,
   workplace: String,
+  workMail: String,
 });
 
 const contactInfoSchema = new Schema({
   mobNo: String,
-  skypeId: String,
-  facebookId: String,
-  gmailId: String,
+  instagram: String,
+  gmail: String,
   website: String,
-  email: String,
+  github: String,
+  linkedin: String,
 });
 
 const userSchema = new Schema({
@@ -48,18 +55,21 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  role: String,
+  currentLocation: String,
+  designation: String,
   password: {
     type: String,
     required: true,
   },
   publicProfileUrl: String,
-  bgImage: {
+  bgImagePath: {
     type: String,
-    default: 'defaultbgImage.jpg',
+    default: "defaultbgImage.jpg",
   },
-  profileImage: {
+  profileImagePath: {
     type: String,
-    default: 'defaultProfileImage.jpg',
+    default: "",
   },
   interviewDreamScore: [
     {
@@ -73,6 +83,9 @@ const userSchema = new Schema({
       },
     },
   ],
+  summary: String,
+  contactRequests: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  contacts: [{ type: Schema.Types.ObjectId, ref: "User" }],
   basicInfo: basicInfoSchema,
   personalInfo: personalInfoSchema,
   educationInfo: educationInfoSchema,
