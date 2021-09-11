@@ -10,7 +10,6 @@ const { v4: uuidv4 } = require("uuid");
 const typeDefs = require("./graphql/schemas");
 const resolvers = require("./graphql/resolvers");
 const { auth } = require("./middleware/auth");
-const messagesRoutes = require("./routes/messages");
 const imageRoutes = require("./routes/images");
 const ioUtil = require("./socket");
 
@@ -96,9 +95,6 @@ app.use("/image", imageRoutes);
 
 // Route for handling images
 app.use("/images", express.static(path.join(__dirname, "images")));
-
-// Route for saving messages
-app.use("/messages", messagesRoutes);
 
 // Redirecting '/' to '/graphql'
 app.get("/", (req, res, next) => {

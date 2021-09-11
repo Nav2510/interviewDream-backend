@@ -7,6 +7,7 @@ const errorCode = {
   testExist: "TEST_EXIST",
   pprExist: "PPR_EXIST",
   testNotExist: "TEST_NOT_EXIST",
+  chatNotExist: "CHAT_NOT_EXIST",
   pprNotExist: "PPR_NOT_EXIST",
   qstnNotExist: "QSTN_NOT_EXIST",
   courseNotExist: "COURSE_NOT_EXIST",

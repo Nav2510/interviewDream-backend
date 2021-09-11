@@ -5,6 +5,7 @@ const {
   deleteQuestion,
   updateQuestion,
 } = require('./resolvers/question-resolver');
+const { getUserMessages } = require("./resolvers/message-resolver");
 const {
   getPaper,
   getPapers,
@@ -12,7 +13,7 @@ const {
   createPaper,
   getPapersByCourseId,
   selectQuestionsForPaper,
-} = require('./resolvers/paper-resolver');
+} = require("./resolvers/paper-resolver");
 const {
   getCurrentUser,
   getProfile,
@@ -52,6 +53,7 @@ module.exports = {
     paper: getPaper,
     papers: getPapers,
     getPapersByCourseId: getPapersByCourseId,
+    getUserMessages: getUserMessages,
     fetchUserByNameOrUsername: fetchUserByNameOrUsername,
     fetchContactRequests: fetchContactRequests,
     fetchAddedContacts: fetchAddedContacts,

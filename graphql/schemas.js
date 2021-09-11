@@ -245,6 +245,11 @@ module.exports = gql`
     workplace: String
     workMail: String
   }
+  type Message {
+    content: String!
+    timestamp: String!
+    owner: String!
+  }
 
   type NormalResponse {
     status: String!
@@ -378,6 +383,7 @@ module.exports = gql`
     paper(id: ID!): Paper!
     papers: PaperData!
     getPapersByCourseId(courseId: ID!): PaperData!
+    getUserMessages(fromUserId: ID!): [Message]!
     fetchUserByNameOrUsername(name: String): [User]!
     fetchContactRequests: [User]!
     fetchAddedContacts: [User]!
