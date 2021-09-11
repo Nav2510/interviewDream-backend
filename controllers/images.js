@@ -35,7 +35,17 @@ exports.uploadProfileImage = async (req, res, next) => {
 
 const clearImage = (filePath) => {
   filePath = path.join(__dirname, "..", filePath);
-  fs.unlink(filePath, (error) =>
-    console.log("Error while unlinking fs", error)
-  );
+  fs.stat(filePath, (error, stat) => {
+    if (error) {
+      console.log("Error occured while fetching file: ", filePath);
+    } else {
+      fs.unlink(filePath, (error) => {
+        if (error) {
+          console.log("Error while unlinking fs:", error);
+        } else {
+          console.log("File deleted: ", filePath);
+        }
+      });
+    }
+  });
 };
