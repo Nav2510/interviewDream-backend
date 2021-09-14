@@ -1,5 +1,7 @@
 # TODO checks
 
+## Fix
+1. Check for the image folder if it is not created create one and add images
 ## Enchancement
 
 1. Added typescript for better typing.
