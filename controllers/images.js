@@ -5,14 +5,10 @@ const { auth } = require("../middleware/auth");
 const User = require("../models/user");
 const errorMsg = require("../util/contants/error-code");
 
-// TODO: Setup authentication
 exports.uploadProfileImage = async (req, res, next) => {
   const extractedToken = auth.authorizeUser(req);
   if (!req.file) {
     return res.status(200).json({ message: "No file provided" });
-  }
-  if (req.body.oldPath) {
-    clearImage(req.body.oldPath);
   }
 
   if (!extractedToken) {
@@ -22,7 +18,7 @@ exports.uploadProfileImage = async (req, res, next) => {
       .json({ msgCode: errorMsg.notAuth, message: "Not Authorized." });
   }
   const currentUser = await User.findById(extractedToken.userId);
-  if (!currentUser.profileImagePath) {
+  if (currentUser.profileImagePath) {
     clearImage(currentUser.profileImagePath);
   }
   currentUser.profileImagePath = req.file.path;
