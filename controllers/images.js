@@ -22,7 +22,7 @@ exports.uploadProfileImage = async (req, res, next) => {
       .json({ msgCode: errorMsg.notAuth, message: "Not Authorized." });
   }
   const currentUser = await User.findById(extractedToken.userId);
-  if (currentUser.profileImagePath !== "defaultProfileImage.jpg") {
+  if (!currentUser.profileImagePath) {
     clearImage(currentUser.profileImagePath);
   }
   currentUser.profileImagePath = req.file.path;
