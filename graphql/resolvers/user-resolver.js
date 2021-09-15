@@ -38,6 +38,27 @@ exports.getProfile = async function (parent, args, context, info) {
   }
   return user;
 };
+exports.updateProfileBackgroundImage = async function (
+  parent,
+  args,
+  context,
+  info
+) {
+  authGuard(context);
+  const userId = context.user.userId;
+  const bgImagePath = args.path;
+  const user = await User.findById(userId);
+  if (!user) {
+    addError(errorMsg.userNotFound, "User not found", 404);
+  }
+  user.bgImagePath = bgImagePath;
+  await user.save();
+  return {
+    status: "OK",
+    code: 200,
+    msg: "Image updated",
+  };
+};
 
 exports.setRole = async function (parent, args, context, info) {
   authGuard(context);

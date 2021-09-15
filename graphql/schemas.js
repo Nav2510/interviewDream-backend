@@ -382,6 +382,7 @@ module.exports = gql`
     me: User!
     paper(id: ID!): Paper!
     papers: PaperData!
+    getBackgroundImages: [String]!
     getPapersByCourseId(courseId: ID!): PaperData!
     getUserMessages(fromUserId: ID!): [Message]!
     fetchUserByNameOrUsername(name: String): [User]!
@@ -414,5 +415,6 @@ module.exports = gql`
     setRole(role: RoleEnum!): NormalResponse!
     updateQuestion(id: ID!, questionInput: QuestionInputData!): Question!
     updateUserProfile(userInput: UserInputData!): Profile!
+    updateProfileBackgroundImage(path: String!): NormalResponse!
   }
 `;

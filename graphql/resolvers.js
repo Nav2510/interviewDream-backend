@@ -5,6 +5,7 @@ const {
   deleteQuestion,
   updateQuestion,
 } = require('./resolvers/question-resolver');
+const { getBackgroundImages } = require("./resolvers/image-resolver");
 const { getUserMessages } = require("./resolvers/message-resolver");
 const {
   getPaper,
@@ -26,6 +27,7 @@ const {
   reponseRequest,
   requestContact,
   setRole,
+  updateProfileBackgroundImage,
 } = require("./resolvers/user-resolver");
 const {
   getTest,
@@ -54,6 +56,7 @@ module.exports = {
     papers: getPapers,
     getPapersByCourseId: getPapersByCourseId,
     getUserMessages: getUserMessages,
+    getBackgroundImages: getBackgroundImages,
     fetchUserByNameOrUsername: fetchUserByNameOrUsername,
     fetchContactRequests: fetchContactRequests,
     fetchAddedContacts: fetchAddedContacts,
@@ -80,6 +83,7 @@ module.exports = {
     deletePaper: deletePaper,
     deleteTest: deleteTest,
     updateUserProfile: updateUserProfile,
+    updateProfileBackgroundImage: updateProfileBackgroundImage,
   },
   ICourse: {
     __resolveType() {

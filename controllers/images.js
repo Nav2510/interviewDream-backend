@@ -3,10 +3,12 @@ const fs = require("fs");
 
 const { auth } = require("../middleware/auth");
 const User = require("../models/user");
+const Image = require("../models/image");
 const errorMsg = require("../util/contants/error-code");
 
 exports.uploadProfileImage = async (req, res, next) => {
   const extractedToken = auth.authorizeUser(req);
+
   if (!req.file) {
     return res.status(200).json({ message: "No file provided" });
   }
@@ -27,6 +29,29 @@ exports.uploadProfileImage = async (req, res, next) => {
   return res
     .status(201)
     .json({ message: "File uploaded.", filePath: req.file.path });
+};
+
+exports.uploadBackgroundImage = async (req, res, next) => {
+  // TODO: Add check so that image can be uploaded by admin only
+  const extractedToken = auth.authorizeUser(req);
+  if (!req.file) {
+    return res.status(200).json({ message: "No file provided" });
+  }
+
+  if (!extractedToken) {
+    clearImage(req.file.path);
+    return res
+      .status(401)
+      .json({ msgCode: errorMsg.notAuth, message: "Not Authorized." });
+  }
+  const image = new Image({
+    type: "background",
+    imagePath: req.file.path,
+  });
+  await image.save();
+  return res
+    .status(200)
+    .json({ message: "Image uploaded", path: req.file.path });
 };
 
 const clearImage = (filePath) => {

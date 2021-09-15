@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -16,6 +17,9 @@ const ioUtil = require("./socket");
 const port = process.env.PORT || 3001;
 
 const app = express();
+
+// Creating image folder if not created in the application
+createFolder();
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -129,3 +133,13 @@ mongoose
       `Tips: Check for the network access in case of mongo connection failure`
     );
   });
+
+
+  function createFolder () {
+    const imageFolder = path.join(__dirname, "images");
+    fs.stat(imageFolder, (error, stat) => {
+      if (error) {
+        fs.mkdirSync(imageFolder);
+      }
+    });
+  };
